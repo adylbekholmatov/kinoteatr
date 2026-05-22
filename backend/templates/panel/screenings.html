@@ -1,0 +1,155 @@
+{% extends 'panel/base_panel.html' %}
+
+{% block page_tab_title %}Сеансы{% endblock %}
+{% block title %}Сеансы{% endblock %}
+{% block nav_screenings %}active{% endblock %}
+
+{% block content %}
+<div class="panel-breadcrumb">
+  <a href="/panel/"><i class="fa-solid fa-house" style="font-size:11px;"></i></a>
+  <span class="sep">/</span>
+  <span class="current">Сеансы</span>
+</div>
+
+<!-- Toolbar -->
+<div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px; margin-bottom:20px;">
+  <form method="get" class="filter-bar">
+    <div style="display:flex; align-items:center; gap:8px;">
+      <i class="fa-regular fa-calendar-days" style="color:var(--muted);"></i>
+      <input
+        type="date"
+        name="date"
+        value="{{ date_filter }}"
+        class="form-control bg-dark text-light border-secondary"
+        style="width:180px;"
+      >
+    </div>
+    <button type="submit" class="btn-panel-secondary btn-panel-sm">
+      <i class="fa-solid fa-filter"></i> Фильтр
+    </button>
+    {% if date_filter %}
+      <a href="/panel/screenings/" class="btn-panel-secondary btn-panel-sm">
+        <i class="fa-solid fa-xmark"></i> Сброс
+      </a>
+    {% endif %}
+  </form>
+
+  <a href="/panel/screenings/add/" class="btn-panel-primary">
+    <i class="fa-solid fa-plus"></i> Добавить сеанс
+  </a>
+</div>
+
+<!-- Table Card -->
+<div class="panel-card">
+  <div class="panel-card-header">
+    <span class="panel-card-title">
+      <i class="fa-solid fa-clapperboard" style="color:var(--red); margin-right:8px;"></i>
+      Сеансы
+      {% if date_filter %}
+        <span style="font-size:12px; color:var(--muted); font-weight:400;"> — {{ date_filter }}</span>
+      {% endif %}
+    </span>
+    <span style="font-size:12px; color:var(--muted);">{{ screenings|length }} сеансов</span>
+  </div>
+
+  {% if screenings %}
+  <div style="overflow-x:auto;">
+    <table class="panel-table">
+      <thead>
+        <tr>
+          <th>Фильм</th>
+          <th>Зал</th>
+          <th>Дата и время</th>
+          <th>Цена</th>
+          <th>Свободных мест</th>
+          <th>Статус</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for s in screenings %}
+        {% with booked=s.get_booked_seat_ids total=s.hall.total_seats %}
+        <tr>
+          <td>
+            <div style="display:flex; align-items:center; gap:10px;">
+              {% if s.movie.poster %}
+                <img src="{{ s.movie.poster.url }}" alt="{{ s.movie.title_ru }}" class="poster-thumb-sm">
+              {% else %}
+                <div style="width:36px; height:50px; background:var(--bg3); border-radius:4px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:14px;">🎬</div>
+              {% endif %}
+              <div>
+                <div style="font-weight:600; font-size:14px; max-width:180px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ s.movie.title_ru }}</div>
+                <div style="font-size:11px; color:var(--muted);">{{ s.movie.age_rating }}</div>
+              </div>
+            </div>
+          </td>
+          <td>
+            <div style="font-weight:500; font-size:13px;">{{ s.hall.name }}</div>
+            <div style="font-size:11px; color:var(--muted);">{{ s.hall.get_hall_type_display }}</div>
+          </td>
+          <td style="white-space:nowrap;">
+            <div style="font-weight:600; font-size:14px;">{{ s.start_time|date:"d.m.Y" }}</div>
+            <div style="font-size:13px; color:var(--muted);">{{ s.start_time|date:"H:i" }}</div>
+          </td>
+          <td>
+            <span style="font-weight:700; font-size:14px;">{{ s.price|floatformat:0 }}</span>
+            <span style="color:var(--muted); font-size:11px;"> сом</span>
+          </td>
+          <td>
+            {% with free=total|add:"-"|add:booked|length %}
+            <div style="display:flex; align-items:center; gap:8px;">
+              <div style="flex:1; max-width:80px;">
+                <div style="background:var(--bg3); border-radius:3px; height:4px; overflow:hidden;">
+                  <div style="background:{% if booked|length == total %}var(--red){% elif booked|length > total|floatformat:0|add:'0' %}#eab308{% else %}#22c55e{% endif %}; height:100%; width:{% widthratio booked|length total 100 %}%;"></div>
+                </div>
+              </div>
+              <span style="font-size:13px; font-weight:600; color:{% if booked|length >= total %}#ef4444{% else %}var(--text){% endif %};">
+                {{ total }} — {{ booked|length }}
+              </span>
+            </div>
+            {% endwith %}
+          </td>
+          <td>
+            {% if s.is_active %}
+              <span class="badge-active"><i class="fa-solid fa-circle" style="font-size:7px;"></i> Активен</span>
+            {% else %}
+              <span class="badge-inactive"><i class="fa-solid fa-circle" style="font-size:7px;"></i> Скрыт</span>
+            {% endif %}
+          </td>
+          <td>
+            <div style="display:flex; gap:6px; align-items:center;">
+              <a href="/panel/screenings/{{ s.pk }}/edit/" class="btn-edit">
+                <i class="fa-solid fa-pen"></i> Изм.
+              </a>
+              <form method="post" action="/panel/screenings/{{ s.pk }}/delete/" style="display:inline;" onsubmit="return confirm('Удалить этот сеанс?');">
+                {% csrf_token %}
+                <button type="submit" class="btn-delete">
+                  <i class="fa-solid fa-trash"></i>
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endwith %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  {% else %}
+  <div class="empty-state">
+    <div class="empty-icon">🎞️</div>
+    <p style="margin-bottom:16px;">
+      {% if date_filter %}
+        Сеансов на выбранную дату не найдено
+      {% else %}
+        Сеансов пока нет
+      {% endif %}
+    </p>
+    <a href="/panel/screenings/add/" class="btn-panel-primary">
+      <i class="fa-solid fa-plus"></i> Добавить первый сеанс
+    </a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

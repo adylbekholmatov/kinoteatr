@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if lang == 'ky' %}Ийгиликтүү!{% else %}Бронирование успешно!{% endif %} — AKI Cinema{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-7">
+      <div class="success-card text-center">
+        <div class="success-icon mb-4">
+          <i class="fas fa-check-circle"></i>
+        </div>
+        <h2 class="text-success mb-2">
+          {% if lang == 'ky' %}Төлөм ийгиликтүү өттү!{% else %}Оплата прошла успешно!{% endif %}
+        </h2>
+        <p class="text-muted mb-4">
+          {% if lang == 'ky' %}
+            Билет маалыматы {{ booking.email }} дарегине жөнөтүлдү.
+          {% else %}
+            Детали билета отправлены на {{ booking.email }}
+          {% endif %}
+        </p>
+
+        <!-- Ticket -->
+        <div class="ticket-card mx-auto">
+          <div class="ticket-header">
+            <div class="aki-brand">
+              <span class="brand-aki">AKI</span><span class="brand-cinema">CINEMA</span>
+            </div>
+            <div class="ticket-code">{{ booking.booking_code }}</div>
+          </div>
+          <div class="ticket-divider">
+            <div class="ticket-hole left"></div>
+            <div class="ticket-dashes"></div>
+            <div class="ticket-hole right"></div>
+          </div>
+          <div class="ticket-body">
+            <div class="ticket-movie">
+              {% if lang == 'ky' %}{{ booking.screening.movie.title_ky }}{% else %}{{ booking.screening.movie.title_ru }}{% endif %}
+            </div>
+            <div class="ticket-details">
+              <div class="ticket-detail-item">
+                <span class="ticket-detail-label">{% if lang == 'ky' %}Күн{% else %}Дата{% endif %}</span>
+                <span class="ticket-detail-value">{{ booking.screening.start_time|date:"d.m.Y" }}</span>
+              </div>
+              <div class="ticket-detail-item">
+                <span class="ticket-detail-label">{% if lang == 'ky' %}Убакыт{% else %}Время{% endif %}</span>
+                <span class="ticket-detail-value">{{ booking.screening.start_time|date:"H:i" }}</span>
+              </div>
+              <div class="ticket-detail-item">
+                <span class="ticket-detail-label">{% if lang == 'ky' %}Зал{% else %}Зал{% endif %}</span>
+                <span class="ticket-detail-value">{{ booking.screening.hall.name }}</span>
+              </div>
+              <div class="ticket-detail-item">
+                <span class="ticket-detail-label">{% if lang == 'ky' %}Орундар{% else %}Места{% endif %}</span>
+                <span class="ticket-detail-value">
+                  {% for bs in seats %}
+                  <span class="seat-badge-sm">Р{{ bs.seat.row }} М{{ bs.seat.number }}</span>
+                  {% endfor %}
+                </span>
+              </div>
+              <div class="ticket-detail-item">
+                <span class="ticket-detail-label">{% if lang == 'ky' %}Сумма{% else %}Сумма{% endif %}</span>
+                <span class="ticket-detail-value text-danger fw-bold">{{ booking.total_amount }} сом</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-4 d-flex gap-3 justify-content-center flex-wrap">
+          <a href="{% url 'index' %}" class="btn btn-danger">
+            <i class="fas fa-home me-2"></i>{% if lang == 'ky' %}Башкы бет{% else %}На главную{% endif %}
+          </a>
+          {% if user.is_authenticated %}
+          <a href="{% url 'my_bookings' %}" class="btn btn-outline-light">
+            <i class="fas fa-ticket-alt me-2"></i>{% if lang == 'ky' %}Билеттерим{% else %}Мои билеты{% endif %}
+          </a>
+          {% endif %}
+          <button class="btn btn-outline-secondary" onclick="window.print()">
+            <i class="fas fa-print me-2"></i>{% if lang == 'ky' %}Басып чыгаруу{% else %}Распечатать{% endif %}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

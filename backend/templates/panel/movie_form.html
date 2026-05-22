@@ -1,0 +1,290 @@
+{% extends 'panel/base_panel.html' %}
+
+{% block page_tab_title %}{{ page_title }}{% endblock %}
+{% block title %}{{ page_title }}{% endblock %}
+{% block nav_movies %}active{% endblock %}
+
+{% block content %}
+<div class="panel-breadcrumb">
+  <a href="/panel/"><i class="fa-solid fa-house" style="font-size:11px;"></i></a>
+  <span class="sep">/</span>
+  <a href="/panel/movies/">Фильмы</a>
+  <span class="sep">/</span>
+  <span class="current">{{ page_title }}</span>
+</div>
+
+<form method="post" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  <div class="row g-3">
+
+    <!-- ── LEFT COLUMN ─────────────────────────────────────────── -->
+    <div class="col-12 col-lg-7">
+
+      <!-- Названия -->
+      <div class="panel-card mb-3">
+        <div class="panel-card-header">
+          <span class="panel-card-title"><i class="fa-solid fa-heading" style="color:var(--red); margin-right:8px;"></i>Названия</span>
+        </div>
+        <div class="panel-card-body" style="display:flex; flex-direction:column; gap:16px;">
+
+          <div>
+            <label class="form-label-panel">{{ form.title_ru.label }} <span style="color:var(--red);">*</span></label>
+            {{ form.title_ru }}
+            {% if form.title_ru.errors %}
+              {% for err in form.title_ru.errors %}
+                <div class="field-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ err }}</div>
+              {% endfor %}
+            {% endif %}
+          </div>
+
+          <div>
+            <label class="form-label-panel">{{ form.title_ky.label }} <span style="color:var(--red);">*</span></label>
+            {{ form.title_ky }}
+            {% if form.title_ky.errors %}
+              {% for err in form.title_ky.errors %}
+                <div class="field-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ err }}</div>
+              {% endfor %}
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Описания -->
+      <div class="panel-card mb-3">
+        <div class="panel-card-header">
+          <span class="panel-card-title"><i class="fa-solid fa-align-left" style="color:var(--red); margin-right:8px;"></i>Описания</span>
+        </div>
+        <div class="panel-card-body" style="display:flex; flex-direction:column; gap:16px;">
+
+          <div>
+            <label class="form-label-panel">{{ form.description_ru.label }} <span style="color:var(--red);">*</span></label>
+            {{ form.description_ru }}
+            {% if form.description_ru.errors %}
+              {% for err in form.description_ru.errors %}
+                <div class="field-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ err }}</div>
+              {% endfor %}
+            {% endif %}
+          </div>
+
+          <div>
+            <label class="form-label-panel">{{ form.description_ky.label }} <span style="color:var(--red);">*</span></label>
+            {{ form.description_ky }}
+            {% if form.description_ky.errors %}
+              {% for err in form.description_ky.errors %}
+                <div class="field-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ err }}</div>
+              {% endfor %}
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Постер -->
+      <div class="panel-card mb-3">
+        <div class="panel-card-header">
+          <span class="panel-card-title"><i class="fa-solid fa-image" style="color:var(--red); margin-right:8px;"></i>Постер</span>
+        </div>
+        <div class="panel-card-body">
+
+          {% if is_edit and movie.poster %}
+          <div style="margin-bottom:12px; display:flex; align-items:center; gap:12px;">
+            <img src="{{ movie.poster.url }}" alt="Текущий постер" style="height:100px; border-radius:8px; border:1px solid var(--border);">
+            <div>
+              <div style="font-size:12px; font-weight:600; color:var(--muted); margin-bottom:4px;">ТЕКУЩИЙ ПОСТЕР</div>
+              <div style="font-size:12px; color:var(--muted);">Загрузите новый файл, чтобы заменить</div>
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="poster-preview-wrap" id="posterPreviewWrap" onclick="document.getElementById('id_poster').click();">
+            <div class="poster-preview-placeholder" id="posterPlaceholder">
+              <i class="fa-regular fa-image"></i>
+              <div style="font-size:14px; font-weight:600; margin-bottom:4px;">Нажмите для выбора постера</div>
+              <div style="font-size:12px;">JPG, PNG — рекомендуемый размер 300×450 px</div>
+            </div>
+            <img id="posterPreviewImg" src="" alt="Предпросмотр" style="display:none;">
+          </div>
+
+          <div style="margin-top:10px;">
+            {{ form.poster }}
+            {% if form.poster.errors %}
+              {% for err in form.poster.errors %}
+                <div class="field-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ err }}</div>
+              {% endfor %}
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT COLUMN ────────────────────────────────────────── -->
+    <div class="col-12 col-lg-5">
+
+      <!-- Детали -->
+      <div class="panel-card mb-3">
+        <div class="panel-card-header">
+          <span class="panel-card-title"><i class="fa-solid fa-circle-info" style="color:var(--red); margin-right:8px;"></i>Детали фильма</span>
+        </div>
+        <div class="panel-card-body" style="display:flex; flex-direction:column; gap:16px;">
+
+          <div class="row g-3">
+            <div class="col-6">
+              <label class="form-label-panel">{{ form.duration.label }} <span style="color:var(--red);">*</span></label>
+              {{ form.duration }}
+              {% if form.duration.errors %}
+                {% for err in form.duration.errors %}
+                  <div class="field-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ err }}</div>
+                {% endfor %}
+              {% endif %}
+              <div style="font-size:11px; color:var(--muted); margin-top:4px;">В минутах (напр. 120)</div>
+            </div>
+            <div class="col-6">
+              <label class="form-label-panel">{{ form.age_rating.label }}</label>
+              {{ form.age_rating }}
+              {% if form.age_rating.errors %}
+                {% for err in form.age_rating.errors %}
+                  <div class="field-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ err }}</div>
+                {% endfor %}
+              {% endif %}
+            </div>
+          </div>
+
+          <div>
+            <label class="form-label-panel">{{ form.release_date.label }} <span style="color:var(--red);">*</span></label>
+            {{ form.release_date }}
+            {% if form.release_date.errors %}
+              {% for err in form.release_date.errors %}
+                <div class="field-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ err }}</div>
+              {% endfor %}
+            {% endif %}
+          </div>
+
+          <div>
+            <label class="form-label-panel">{{ form.country.label }}</label>
+            {{ form.country }}
+          </div>
+
+          <div>
+            <label class="form-label-panel">{{ form.director.label }}</label>
+            {{ form.director }}
+          </div>
+
+          <div>
+            <label class="form-label-panel">{{ form.trailer_url.label }}</label>
+            {{ form.trailer_url }}
+            {% if form.trailer_url.errors %}
+              {% for err in form.trailer_url.errors %}
+                <div class="field-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ err }}</div>
+              {% endfor %}
+            {% endif %}
+            <div style="font-size:11px; color:var(--muted); margin-top:4px;">Ссылка на YouTube трейлер</div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Жанры -->
+      <div class="panel-card mb-3">
+        <div class="panel-card-header">
+          <span class="panel-card-title"><i class="fa-solid fa-tags" style="color:var(--red); margin-right:8px;"></i>Жанры</span>
+        </div>
+        <div class="panel-card-body">
+          <div class="genre-checkboxes">
+            {% for choice in form.genres %}
+              <label>
+                {{ choice.tag }}
+                {{ choice.choice_label }}
+              </label>
+            {% endfor %}
+          </div>
+          {% if form.genres.errors %}
+            {% for err in form.genres.errors %}
+              <div class="field-error" style="margin-top:8px;"><i class="fa-solid fa-triangle-exclamation"></i> {{ err }}</div>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Настройки -->
+      <div class="panel-card mb-3">
+        <div class="panel-card-header">
+          <span class="panel-card-title"><i class="fa-solid fa-toggle-on" style="color:var(--red); margin-right:8px;"></i>Настройки отображения</span>
+        </div>
+        <div class="panel-card-body" style="display:flex; flex-direction:column; gap:10px;">
+
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label-text">{{ form.is_active.label }}</div>
+              <div class="toggle-sublabel">Фильм виден пользователям</div>
+            </div>
+            <div class="form-switch">
+              {{ form.is_active }}
+            </div>
+          </div>
+
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label-text">{{ form.is_new.label }}</div>
+              <div class="toggle-sublabel">Показывать в блоке «Новинки»</div>
+            </div>
+            <div class="form-switch">
+              {{ form.is_new }}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Action Buttons -->
+  <div style="display:flex; gap:12px; align-items:center; margin-top:4px; flex-wrap:wrap;">
+    <button type="submit" class="btn-panel-primary" style="padding:13px 32px; font-size:15px;">
+      <i class="fa-solid {% if is_edit %}fa-floppy-disk{% else %}fa-plus{% endif %}"></i>
+      {% if is_edit %}Сохранить изменения{% else %}Добавить фильм{% endif %}
+    </button>
+    <a href="/panel/movies/" class="btn-panel-secondary" style="padding:13px 24px;">
+      <i class="fa-solid fa-xmark"></i> Отмена
+    </a>
+    {% if is_edit %}
+    <form method="post" action="/panel/movies/{{ movie.pk }}/delete/" style="margin-left:auto;" onsubmit="return confirm('Удалить фильм «{{ movie.title_ru }}»? Это действие нельзя отменить.');">
+      {% csrf_token %}
+      <button type="submit" class="btn-delete" style="padding:13px 20px; font-size:13px;">
+        <i class="fa-solid fa-trash"></i> Удалить фильм
+      </button>
+    </form>
+    {% endif %}
+  </div>
+
+</form>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Poster preview
+  const posterInput = document.getElementById('id_poster');
+  const previewImg  = document.getElementById('posterPreviewImg');
+  const placeholder = document.getElementById('posterPlaceholder');
+
+  if (posterInput) {
+    posterInput.style.display = 'none';
+    posterInput.addEventListener('change', function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          previewImg.src = e.target.result;
+          previewImg.style.display = 'block';
+          placeholder.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+</script>
+{% endblock %}

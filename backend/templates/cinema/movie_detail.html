@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if lang == 'ky' %}{{ movie.title_ky }}{% else %}{{ movie.title_ru }}{% endif %} — AKI Cinema{% endblock %}
+
+{% block content %}
+<!-- Hero backdrop -->
+<div class="movie-detail-hero">
+  {% if movie.poster %}
+  <div class="movie-detail-backdrop" style="background-image:url('{{ movie.poster.url }}');"></div>
+  {% endif %}
+  <div class="movie-detail-hero-overlay"></div>
+  <div class="container movie-detail-hero-content py-5">
+    <div class="row align-items-end g-4">
+      <div class="col-md-auto">
+        {% if movie.poster %}
+        <img src="{{ movie.poster.url }}" alt="{{ movie.title_ru }}" class="movie-detail-poster" />
+        {% else %}
+        <div class="movie-detail-poster no-poster"><i class="fas fa-film fa-4x"></i></div>
+        {% endif %}
+      </div>
+      <div class="col">
+        <div class="d-flex flex-wrap gap-2 mb-2">
+          <span class="age-badge">{{ movie.age_rating }}</span>
+          {% if movie.is_new %}<span class="badge bg-danger">NEW</span>{% endif %}
+          {% for g in movie.genres.all %}
+          <span class="genre-tag">{% if lang == 'ky' %}{{ g.name_ky }}{% else %}{{ g.name_ru }}{% endif %}</span>
+          {% endfor %}
+        </div>
+        <h1 class="movie-detail-title">
+          {% if lang == 'ky' %}{{ movie.title_ky }}{% else %}{{ movie.title_ru }}{% endif %}
+        </h1>
+        <div class="movie-detail-meta d-flex flex-wrap gap-4 mt-3">
+          <div><i class="fas fa-clock text-danger me-2"></i>{{ movie.duration_display }}</div>
+          {% if movie.director %}<div><i class="fas fa-video text-danger me-2"></i>{{ movie.director }}</div>{% endif %}
+          {% if movie.country %}<div><i class="fas fa-globe text-danger me-2"></i>{{ movie.country }}</div>{% endif %}
+          <div><i class="fas fa-calendar text-danger me-2"></i>{{ movie.release_date|date:"d.m.Y" }}</div>
+        </div>
+        {% if movie.trailer_url %}
+        <a href="{{ movie.trailer_url }}" target="_blank" class="btn btn-danger mt-4">
+          <i class="fab fa-youtube me-2"></i>
+          {% if lang == 'ky' %}Трейлер{% else %}Смотреть трейлер{% endif %}
+        </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row g-5">
+    <!-- Description -->
+    <div class="col-lg-7">
+      <h3 class="section-title mb-3">
+        <span class="title-line"></span>
+        {% if lang == 'ky' %}Сүрөттөмө{% else %}Описание{% endif %}
+      </h3>
+      <p class="movie-description">
+        {% if lang == 'ky' %}{{ movie.description_ky }}{% else %}{{ movie.description_ru }}{% endif %}
+      </p>
+    </div>
+
+    <!-- Screenings -->
+    <div class="col-lg-5">
+      <h3 class="section-title mb-3">
+        <span class="title-line"></span>
+        {% if lang == 'ky' %}Сеанстар{% else %}Сеансы{% endif %}
+      </h3>
+      {% if screenings_by_date %}
+        {% for date, screenings in screenings_by_date.items %}
+        <div class="mb-4">
+          <div class="screening-date-label">{{ date|date:"d MMMM, l" }}</div>
+          <div class="screening-time-list mt-2">
+            {% for s in screenings %}
+            <a href="{% url 'seat_selection' s.id %}" class="screening-time-btn {% if s.hall.hall_type == 'vip' %}vip{% endif %}">
+              <span class="st-time">{{ s.start_time|date:"H:i" }}</span>
+              <span class="st-hall">{{ s.hall.name }}</span>
+              <span class="st-price">{{ s.price }} сом</span>
+              {% if s.hall.hall_type == 'vip' %}<span class="st-vip-label">VIP</span>{% endif %}
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+      <div class="text-muted">
+        <i class="fas fa-calendar-times me-2"></i>
+        {% if lang == 'ky' %}Азырча сеанс жок{% else %}Сеансов пока нет{% endif %}
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

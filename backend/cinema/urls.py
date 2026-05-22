@@ -1,0 +1,24 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('', views.index, name='index'),
+    path('schedule/', views.schedule, name='schedule'),
+    path('movie/<int:pk>/', views.movie_detail, name='movie_detail'),
+    path('screening/<int:screening_id>/seats/', views.seat_selection, name='seat_selection'),
+    path('screening/<int:screening_id>/checkout/', views.checkout, name='checkout'),
+    path('payment/', views.payment, name='payment'),
+    path('payment/callback/', views.paybox_callback, name='paybox_callback'),
+    path('payment/success/', views.paybox_success, name='paybox_success'),
+    path('payment/fail/', views.paybox_fail, name='paybox_fail'),
+    path('booking/<str:code>/success/', views.booking_success, name='booking_success'),
+    path('my-bookings/', views.my_bookings, name='my_bookings'),
+    path('about/', views.about, name='about'),
+    path('contacts/', views.contacts, name='contacts'),
+    path('auth/register/', views.register_view, name='register'),
+    path('auth/login/', views.login_view, name='login'),
+    path('auth/logout/', views.logout_view, name='logout'),
+    path('ajax/screenings/<int:movie_id>/', views.screenings_by_movie, name='screenings_by_movie'),
+    path('set-theme/', views.set_theme, name='set_theme'),
+    path('set-language/', views.set_language_custom, name='set_language_custom'),
+]

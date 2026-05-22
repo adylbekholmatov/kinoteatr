@@ -1,0 +1,225 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\App.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AKICinemaAdmin\\App.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\App.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AKICinemaAdmin\\App.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\AKICinemaAdmin.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AKICinemaAdmin\\AKICinemaAdmin.csproj||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\MainWindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AKICinemaAdmin\\Views\\MainWindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Services\\ApiService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AKICinemaAdmin\\Services\\ApiService.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\SeatSelectionPage.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AKICinemaAdmin\\Views\\SeatSelectionPage.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\SearchView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AKICinemaAdmin\\Views\\SearchView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\SchedulePage.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AKICinemaAdmin\\Views\\SchedulePage.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\LoginView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AKICinemaAdmin\\Views\\LoginView.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\MainWindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AKICinemaAdmin\\Views\\MainWindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\LoginView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AKICinemaAdmin\\Views\\LoginView.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\MainWindow.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:AKICinemaAdmin\\Views\\MainWindow.xaml||{FA3CD31E-987B-443A-9B81-186104E8DAC1}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 5,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{7d1a5679-04f2-3f4a-851f-855baa54731c}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AKICinemaAdmin.csproj",
+              "DocumentMoniker": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\AKICinemaAdmin.csproj",
+              "RelativeDocumentMoniker": "AKICinemaAdmin\\AKICinemaAdmin.csproj",
+              "ToolTip": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\AKICinemaAdmin.csproj",
+              "RelativeToolTip": "AKICinemaAdmin\\AKICinemaAdmin.csproj",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000758|",
+              "WhenOpened": "2026-05-12T11:04:25.957Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "MainWindow.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\MainWindow.xaml.cs",
+              "RelativeDocumentMoniker": "AKICinemaAdmin\\Views\\MainWindow.xaml.cs",
+              "ToolTip": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\MainWindow.xaml.cs",
+              "RelativeToolTip": "AKICinemaAdmin\\Views\\MainWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T11:03:35.956Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ApiService.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Services\\ApiService.cs",
+              "RelativeDocumentMoniker": "AKICinemaAdmin\\Services\\ApiService.cs",
+              "ToolTip": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Services\\ApiService.cs",
+              "RelativeToolTip": "AKICinemaAdmin\\Services\\ApiService.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAAAABkAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T11:03:20.532Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "App.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\App.xaml.cs",
+              "RelativeDocumentMoniker": "AKICinemaAdmin\\App.xaml.cs",
+              "ToolTip": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\App.xaml.cs",
+              "RelativeToolTip": "AKICinemaAdmin\\App.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T11:03:00.275Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "SearchView.xaml",
+              "DocumentMoniker": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\SearchView.xaml",
+              "RelativeDocumentMoniker": "AKICinemaAdmin\\Views\\SearchView.xaml",
+              "ToolTip": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\SearchView.xaml",
+              "RelativeToolTip": "AKICinemaAdmin\\Views\\SearchView.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-09T12:04:27.508Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "SchedulePage.xaml",
+              "DocumentMoniker": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\SchedulePage.xaml",
+              "RelativeDocumentMoniker": "AKICinemaAdmin\\Views\\SchedulePage.xaml",
+              "ToolTip": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\SchedulePage.xaml",
+              "RelativeToolTip": "AKICinemaAdmin\\Views\\SchedulePage.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-09T12:04:25.455Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "App.xaml",
+              "DocumentMoniker": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\App.xaml",
+              "RelativeDocumentMoniker": "AKICinemaAdmin\\App.xaml",
+              "ToolTip": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\App.xaml",
+              "RelativeToolTip": "AKICinemaAdmin\\App.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAABEAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-08T17:27:54.159Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "SeatSelectionPage.xaml",
+              "DocumentMoniker": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\SeatSelectionPage.xaml",
+              "RelativeDocumentMoniker": "AKICinemaAdmin\\Views\\SeatSelectionPage.xaml",
+              "ToolTip": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\SeatSelectionPage.xaml",
+              "RelativeToolTip": "AKICinemaAdmin\\Views\\SeatSelectionPage.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-09T12:04:28.987Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "LoginView.xaml",
+              "DocumentMoniker": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\LoginView.xaml",
+              "RelativeDocumentMoniker": "AKICinemaAdmin\\Views\\LoginView.xaml",
+              "ToolTip": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\LoginView.xaml",
+              "RelativeToolTip": "AKICinemaAdmin\\Views\\LoginView.xaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-09T12:04:22.258Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "LoginView.xaml.cs",
+              "DocumentMoniker": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\LoginView.xaml.cs",
+              "RelativeDocumentMoniker": "AKICinemaAdmin\\Views\\LoginView.xaml.cs",
+              "ToolTip": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\LoginView.xaml.cs",
+              "RelativeToolTip": "AKICinemaAdmin\\Views\\LoginView.xaml.cs",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAAAC4AAAAQAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-09T11:55:25.523Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "AKICinemaAdmin\\Views\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\MainWindow.xaml",
+              "RelativeToolTip": "AKICinemaAdmin\\Views\\MainWindow.xaml",
+              "ViewState": "AgIAABoAAAAAAAAAAAAAAAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-09T11:52:18.899Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "MainWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\MainWindow.xaml",
+              "RelativeDocumentMoniker": "AKICinemaAdmin\\Views\\MainWindow.xaml",
+              "ToolTip": "C:\\Users\\user\\Desktop\\kinoteatr\\desktop_app\\AKICinemaAdmin\\Views\\MainWindow.xaml",
+              "RelativeToolTip": "AKICinemaAdmin\\Views\\MainWindow.xaml",
+              "ViewState": "AgIAABEAAAAAAAAAAAAAACAAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-09T11:48:51.543Z"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{cce594b6-0c39-4442-ba28-10c64ac7e89f}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,180 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if lang == 'ky' %}Төлөм{% else %}Оплата{% endif %} — AKI Cinema{% endblock %}
+
+{% block extra_css %}
+<style>
+.card-visual { background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460); border-radius:16px; padding:28px; color:#fff; position:relative; overflow:hidden; min-height:190px; }
+.card-visual::before { content:''; position:absolute; top:-40px; right:-40px; width:180px; height:180px; border-radius:50%; background:rgba(200,16,46,0.15); }
+.card-chip { width:44px; height:32px; background:linear-gradient(135deg,#d4af37,#f0c040); border-radius:6px; margin-bottom:16px; }
+.card-number-display { font-size:1.25rem; letter-spacing:4px; font-family:'Courier New',monospace; margin-bottom:12px; color:#e0e0e0; }
+.card-bottom { display:flex; justify-content:space-between; font-size:.8rem; color:#aaa; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="page-title">
+      <i class="fas fa-credit-card text-danger me-3"></i>
+      {% if lang == 'ky' %}Картадан төлөм{% else %}Оплата картой{% endif %}
+    </h1>
+  </div>
+</div>
+
+<div class="container py-5">
+  <!-- Steps -->
+  <div class="checkout-steps mb-5">
+    <div class="step done"><div class="step-num"><i class="fas fa-check"></i></div><div class="step-label">{% if lang == 'ky' %}Маалымат{% else %}Данные{% endif %}</div></div>
+    <div class="step-line active"></div>
+    <div class="step active"><div class="step-num">2</div><div class="step-label">{% if lang == 'ky' %}Төлөм{% else %}Оплата{% endif %}</div></div>
+    <div class="step-line"></div>
+    <div class="step"><div class="step-num">3</div><div class="step-label">{% if lang == 'ky' %}Бүттү{% else %}Готово{% endif %}</div></div>
+  </div>
+
+  <div class="row g-5 justify-content-center">
+    <div class="col-lg-6">
+      <!-- Card visual -->
+      <div class="card-visual mb-4">
+        <div class="card-chip"></div>
+        <div class="card-number-display" id="cardDisplay">•••• •••• •••• ••••</div>
+        <div class="card-bottom">
+          <div>
+            <div style="font-size:.65rem;opacity:.7;">{% if lang == 'ky' %}КАРТА ЭЭСИ{% else %}ВЛАДЕЛЕЦ{% endif %}</div>
+            <div id="holderDisplay">IVAN IVANOV</div>
+          </div>
+          <div>
+            <div style="font-size:.65rem;opacity:.7;">{% if lang == 'ky' %}МӨӨНӨТҮ{% else %}СРОК{% endif %}</div>
+            <div id="expiryDisplay">MM/YY</div>
+          </div>
+          <div style="font-size:2rem;font-weight:900;opacity:.6;">AKI</div>
+        </div>
+      </div>
+
+      <div class="aki-card p-4">
+        <form method="post" id="paymentForm">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label class="form-label" style="color:var(--text-dim);">
+              <i class="fas fa-credit-card text-danger me-1"></i>
+              {% if lang == 'ky' %}Картанын номери{% else %}Номер карты{% endif %} *
+            </label>
+            {{ form.card_number }}
+            {% if form.card_number.errors %}<div class="text-danger small mt-1">{{ form.card_number.errors.0 }}</div>{% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" style="color:var(--text-dim);">
+              <i class="fas fa-user text-danger me-1"></i>
+              {% if lang == 'ky' %}Карта ээсинин аты{% else %}Имя владельца{% endif %} *
+            </label>
+            {{ form.card_holder }}
+            {% if form.card_holder.errors %}<div class="text-danger small mt-1">{{ form.card_holder.errors.0 }}</div>{% endif %}
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-6">
+              <label class="form-label" style="color:var(--text-dim);">
+                <i class="fas fa-calendar text-danger me-1"></i>
+                {% if lang == 'ky' %}Мөөнөтү{% else %}Срок действия{% endif %} *
+              </label>
+              {{ form.expiry }}
+              {% if form.expiry.errors %}<div class="text-danger small mt-1">{{ form.expiry.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-6">
+              <label class="form-label" style="color:var(--text-dim);">
+                <i class="fas fa-lock text-danger me-1"></i> CVV *
+              </label>
+              {{ form.cvv }}
+              {% if form.cvv.errors %}<div class="text-danger small mt-1">{{ form.cvv.errors.0 }}</div>{% endif %}
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-danger btn-lg w-100" id="payBtn">
+            <i class="fas fa-lock me-2"></i>
+            {% if lang == 'ky' %}{{ total }} сом төлөө{% else %}Оплатить {{ total }} сом{% endif %}
+          </button>
+        </form>
+      </div>
+
+      <div class="text-center mt-3 text-muted small">
+        <i class="fas fa-shield-alt text-danger me-1"></i>
+        {% if lang == 'ky' %}Коопсуз 256-bit SSL шифрлөө{% else %}Защищено 256-bit SSL шифрованием{% endif %}
+        &nbsp;|&nbsp;
+        <i class="fab fa-cc-visa text-muted"></i>
+        <i class="fab fa-cc-mastercard text-muted ms-1"></i>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="col-lg-4">
+      <div class="aki-card p-4">
+        <h5 class="mb-3 text-danger"><i class="fas fa-receipt me-2"></i>{% if lang == 'ky' %}Буйрутма{% else %}Заказ{% endif %}</h5>
+        <div class="fw-bold">{% if lang == 'ky' %}{{ screening.movie.title_ky }}{% else %}{{ screening.movie.title_ru }}{% endif %}</div>
+        <div class="text-muted small mt-1">
+          <i class="fas fa-calendar me-1"></i>{{ screening.start_time|date:"d.m.Y H:i" }}<br>
+          <i class="fas fa-door-open me-1"></i>{{ screening.hall.name }}
+        </div>
+        <hr class="border-secondary">
+        <div class="mb-2">
+          <strong>{% if lang == 'ky' %}Орундар:{% else %}Места:{% endif %}</strong>
+          <ul class="mt-1 ps-3">
+            {% for seat in seats %}
+            <li class="text-muted small">{% if lang == 'ky' %}Ряд{% else %}Ряд{% endif %} {{ seat.row }}, {% if lang == 'ky' %}Орун{% else %}М.{% endif %} {{ seat.number }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        <hr class="border-secondary">
+        <div class="mb-1 text-muted small">
+          <i class="fas fa-envelope me-1"></i>{{ checkout_data.email }}
+        </div>
+        <div class="mb-3 text-muted small">
+          <i class="fas fa-phone me-1"></i>{{ checkout_data.phone }}
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="fw-bold">{% if lang == 'ky' %}Жалпы:{% else %}Итого:{% endif %}</span>
+          <span class="total-amount fs-5">{{ total }} сом</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Live card preview
+const cardInput = document.getElementById('id_card_number');
+const holderInput = document.getElementById('id_card_holder');
+const expiryInput = document.getElementById('id_expiry');
+
+if (cardInput) {
+  cardInput.addEventListener('input', function() {
+    let v = this.value.replace(/\D/g, '').substring(0,16);
+    this.value = v.replace(/(.{4})/g, '$1 ').trim();
+    let display = v.padEnd(16,'•').replace(/(.{4})/g, '$1 ').trim();
+    document.getElementById('cardDisplay').textContent = display;
+  });
+}
+if (holderInput) {
+  holderInput.addEventListener('input', function() {
+    document.getElementById('holderDisplay').textContent = this.value.toUpperCase() || 'IVAN IVANOV';
+  });
+}
+if (expiryInput) {
+  expiryInput.addEventListener('input', function() {
+    let v = this.value.replace(/\D/g,'').substring(0,4);
+    if (v.length >= 2) v = v.substring(0,2) + '/' + v.substring(2);
+    this.value = v;
+    document.getElementById('expiryDisplay').textContent = this.value || 'MM/YY';
+  });
+}
+
+document.getElementById('paymentForm').addEventListener('submit', function() {
+  const btn = document.getElementById('payBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>{% if lang == "ky" %}Иштетилүүдө...{% else %}Обработка...{% endif %}';
+});
+</script>
+{% endblock %}

@@ -1,0 +1,230 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if lang == 'ky' %}Кирүү{% else %}Войти{% endif %} — AKI Cinema{% endblock %}
+
+{% block extra_css %}
+<style>
+.auth-page {
+  min-height: calc(100vh - 70px);
+  display: flex;
+  align-items: center;
+  padding: 40px 0;
+  position: relative;
+  overflow: hidden;
+}
+/* Animated background */
+.auth-page::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 15% 50%, rgba(200,16,46,.12) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 20%, rgba(200,16,46,.07) 0%, transparent 45%);
+  pointer-events: none;
+}
+body.theme-light .auth-page::before {
+  background:
+    radial-gradient(ellipse at 15% 50%, rgba(200,16,46,.06) 0%, transparent 55%),
+    radial-gradient(ellipse at 85% 20%, rgba(200,16,46,.04) 0%, transparent 45%);
+}
+
+.auth-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 48px 40px;
+  box-shadow: 0 24px 60px rgba(0,0,0,.25);
+  position: relative;
+}
+body.theme-dark .auth-card {
+  box-shadow: 0 24px 60px rgba(0,0,0,.5), 0 0 0 1px rgba(200,16,46,.08);
+}
+body.theme-light .auth-card {
+  box-shadow: 0 8px 40px rgba(0,0,0,.1);
+}
+
+/* Top red accent line */
+.auth-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 40px; right: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--red), transparent);
+  border-radius: 0 0 4px 4px;
+}
+
+.auth-logo { font-family: 'Oswald', sans-serif; font-size: 1.8rem; letter-spacing: 1px; }
+.auth-logo .r { color: var(--red); font-weight: 700; }
+.auth-logo .c { color: var(--text-bright); font-weight: 400; }
+
+.auth-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-bright);
+  margin: 0 0 6px;
+}
+.auth-subtitle { font-size: .88rem; color: var(--muted); }
+
+.auth-divider {
+  display: flex; align-items: center; gap: 12px;
+  margin: 24px 0; color: var(--muted); font-size: .8rem;
+}
+.auth-divider::before, .auth-divider::after {
+  content: ''; flex: 1; height: 1px; background: var(--border);
+}
+
+.field-wrap { position: relative; margin-bottom: 18px; }
+.field-wrap .field-icon {
+  position: absolute;
+  left: 14px; top: 50%; transform: translateY(-50%);
+  color: var(--muted); font-size: .85rem;
+  pointer-events: none;
+}
+.field-wrap .form-control,
+.field-wrap .form-select {
+  padding-left: 38px !important;
+}
+.field-label {
+  display: block;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .7px;
+  margin-bottom: 6px;
+}
+
+.btn-auth {
+  display: block; width: 100%;
+  padding: 13px;
+  background: var(--red);
+  color: #fff;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Montserrat', sans-serif;
+  font-size: .95rem;
+  font-weight: 700;
+  letter-spacing: .5px;
+  cursor: pointer;
+  transition: background .2s, transform .15s, box-shadow .2s;
+  box-shadow: 0 4px 16px rgba(200,16,46,.35);
+}
+.btn-auth:hover {
+  background: #a50d25;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(200,16,46,.45);
+}
+.btn-auth:active { transform: translateY(0); }
+
+.auth-switch {
+  text-align: center;
+  font-size: .85rem;
+  color: var(--muted);
+  margin-top: 24px;
+}
+.auth-switch a { color: var(--red); font-weight: 600; text-decoration: none; }
+.auth-switch a:hover { color: var(--red-light); text-decoration: underline; }
+
+/* Error styling */
+.auth-error {
+  background: rgba(239,68,68,.1);
+  border: 1px solid rgba(239,68,68,.3);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: #ef4444;
+  font-size: .85rem;
+  margin-bottom: 18px;
+  display: flex; align-items: center; gap: 8px;
+}
+.field-err { font-size: .78rem; color: #ef4444; margin-top: 4px; display: flex; align-items: center; gap: 4px; }
+
+/* Benefits strip */
+.auth-benefits {
+  display: flex; gap: 20px; justify-content: center;
+  margin-top: 28px; flex-wrap: wrap;
+}
+.auth-benefit {
+  display: flex; align-items: center; gap: 6px;
+  font-size: .75rem; color: var(--muted);
+}
+.auth-benefit i { color: var(--red); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-page">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-sm-10 col-md-7 col-lg-5 col-xl-4">
+
+        <div class="auth-card">
+          <!-- Logo -->
+          <div class="text-center mb-4">
+            <div class="auth-logo mb-3">
+              <span class="r">AKI</span><span class="c">CINEMA</span>
+            </div>
+            <h1 class="auth-title">{% if lang == 'ky' %}Аккаунтка кирүү{% else %}Вход в аккаунт{% endif %}</h1>
+            <p class="auth-subtitle">{% if lang == 'ky' %}Билет алуу үчүн кириңиз{% else %}Войдите, чтобы купить билеты{% endif %}</p>
+          </div>
+
+          <!-- Non-field errors -->
+          {% if form.non_field_errors %}
+          <div class="auth-error">
+            <i class="fas fa-exclamation-circle"></i>
+            {{ form.non_field_errors.0 }}
+          </div>
+          {% endif %}
+
+          <form method="post">
+            {% csrf_token %}
+
+            <!-- Username -->
+            <label class="field-label"><i class="fas fa-user me-1"></i>{% if lang == 'ky' %}Логин{% else %}Логин{% endif %}</label>
+            <div class="field-wrap">
+              <i class="fas fa-user field-icon"></i>
+              {{ form.username }}
+            </div>
+            {% if form.username.errors %}
+            <div class="field-err"><i class="fas fa-triangle-exclamation"></i>{{ form.username.errors.0 }}</div>
+            {% endif %}
+
+            <!-- Password -->
+            <label class="field-label" style="margin-top:4px;"><i class="fas fa-lock me-1"></i>{% if lang == 'ky' %}Сырсөз{% else %}Пароль{% endif %}</label>
+            <div class="field-wrap">
+              <i class="fas fa-lock field-icon"></i>
+              {{ form.password }}
+            </div>
+            {% if form.password.errors %}
+            <div class="field-err mb-2"><i class="fas fa-triangle-exclamation"></i>{{ form.password.errors.0 }}</div>
+            {% endif %}
+
+            <div style="margin-top:24px;">
+              <button type="submit" class="btn-auth">
+                <i class="fas fa-sign-in-alt me-2"></i>
+                {% if lang == 'ky' %}Кирүү{% else %}Войти{% endif %}
+              </button>
+            </div>
+          </form>
+
+          <div class="auth-divider">{% if lang == 'ky' %}же{% else %}или{% endif %}</div>
+
+          <div class="auth-switch">
+            {% if lang == 'ky' %}Аккаунт жокпу?{% else %}Нет аккаунта?{% endif %}
+            <a href="{% url 'register' %}">
+              {% if lang == 'ky' %}Катталуу{% else %}Зарегистрироваться{% endif %}
+            </a>
+          </div>
+        </div>
+
+        <!-- Benefits -->
+        <div class="auth-benefits">
+          <div class="auth-benefit"><i class="fas fa-ticket-alt"></i>{% if lang == 'ky' %}Онлайн билет{% else %}Онлайн билеты{% endif %}</div>
+          <div class="auth-benefit"><i class="fas fa-history"></i>{% if lang == 'ky' %}Тарых{% else %}История{% endif %}</div>
+          <div class="auth-benefit"><i class="fas fa-shield-alt"></i>{% if lang == 'ky' %}Коопсуз{% else %}Безопасно{% endif %}</div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

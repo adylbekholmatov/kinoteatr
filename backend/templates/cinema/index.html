@@ -1,0 +1,283 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AKI Cinema — {% if lang == 'ky' %}Башкы бет{% else %}Главная{% endif %}{% endblock %}
+
+{% block content %}
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero-section">
+  <div class="hero-overlay"></div>
+  <div class="container hero-content">
+    <div class="row align-items-center" style="min-height:520px;">
+      <div class="col-lg-7">
+        <div class="hero-badge mb-3">
+          <i class="fas fa-film me-2"></i>
+          {% if lang == 'ky' %}Жаңы кинолор{% else %}Новинки кино{% endif %}
+        </div>
+        <h1 class="hero-title">
+          {% if lang == 'ky' %}
+            Кино дүйнөсүнө <span class="text-danger">кош келиңиз</span>
+          {% else %}
+            Добро пожаловать в мир <span class="text-danger">большого кино</span>
+          {% endif %}
+        </h1>
+        <p class="hero-subtitle">
+          {% if lang == 'ky' %}
+            AKI Cinema — Бишкектеги эң заманбап кинотеатр. 6 зал, VIP орундар, соңку технологиялар.
+          {% else %}
+            AKI Cinema — самый современный кинотеатр Бишкека. 6 залов, VIP-места, новейшие технологии.
+          {% endif %}
+        </p>
+        <div class="hero-actions mt-4">
+          <a href="{% url 'schedule' %}" class="btn btn-danger btn-lg me-3">
+            <i class="fas fa-calendar-alt me-2"></i>
+            {% if lang == 'ky' %}Иш-чаралар{% else %}Расписание{% endif %}
+          </a>
+          <a href="#new-movies" class="btn btn-outline-light btn-lg">
+            <i class="fas fa-play-circle me-2"></i>
+            {% if lang == 'ky' %}Кинолор{% else %}Фильмы{% endif %}
+          </a>
+        </div>
+      </div>
+      <div class="col-lg-5 d-none d-lg-flex justify-content-end">
+        <div class="hero-stats">
+          <div class="stat-item">
+            <span class="stat-number">6</span>
+            <span class="stat-label">{% if lang == 'ky' %}Залдар{% else %}Залов{% endif %}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">3</span>
+            <span class="stat-label">VIP</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">4K</span>
+            <span class="stat-label">{% if lang == 'ky' %}Сапат{% else %}Качество{% endif %}</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">Dolby</span>
+            <span class="stat-label">Atmos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Scrolling ticker -->
+  <div class="hero-ticker">
+    <div class="ticker-inner">
+      {% if lang == 'ky' %}
+      <span>🎬 AKI CINEMA</span>
+      <span>★ ЖАҢЫ КИНОЛОР</span>
+      <span>🎟 ОНЛАЙН БИЛЕТ</span>
+      <span>⭐ VIP ЗАЛДАР</span>
+      <span>🔊 DOLBY ATMOS</span>
+      <span>📽 4K САПАТ</span>
+      <span>🎬 AKI CINEMA</span>
+      <span>★ ЖАҢЫ КИНОЛОР</span>
+      <span>🎟 ОНЛАЙН БИЛЕТ</span>
+      <span>⭐ VIP ЗАЛДАР</span>
+      {% else %}
+      <span>🎬 AKI CINEMA</span>
+      <span>★ НОВИНКИ</span>
+      <span>🎟 ОНЛАЙН БИЛЕТЫ</span>
+      <span>⭐ VIP ЗАЛЫ</span>
+      <span>🔊 DOLBY ATMOS</span>
+      <span>📽 4K КАЧЕСТВО</span>
+      <span>🎬 AKI CINEMA</span>
+      <span>★ НОВИНКИ</span>
+      <span>🎟 ОНЛАЙН БИЛЕТЫ</span>
+      <span>⭐ VIP ЗАЛЫ</span>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ СЕГОДНЯ В КИНО ═══════════ -->
+{% if upcoming_screenings %}
+<section class="py-5">
+  <div class="container">
+    <div class="section-header mb-4">
+      <h2 class="section-title">
+        <span class="title-line"></span>
+        {% if lang == 'ky' %}Бүгүн кинотеатрда{% else %}Сегодня в кино{% endif %}
+      </h2>
+      <a href="{% url 'schedule' %}" class="btn btn-outline-danger btn-sm">
+        {% if lang == 'ky' %}Баары{% else %}Все сеансы{% endif %} <i class="fas fa-arrow-right ms-1"></i>
+      </a>
+    </div>
+    <div class="row g-3">
+      {% for s in upcoming_screenings %}
+      <div class="col-md-4 col-lg-2">
+        <a href="{% url 'seat_selection' s.id %}" class="screening-mini-card">
+          {% if s.movie.poster %}
+          <img src="{{ s.movie.poster.url }}" alt="{{ s.movie.title_ru }}" class="screening-mini-poster" />
+          {% else %}
+          <div class="screening-mini-poster no-poster"><i class="fas fa-film"></i></div>
+          {% endif %}
+          <div class="screening-mini-info">
+            <div class="screening-mini-time">{{ s.start_time|date:"H:i" }}</div>
+            <div class="screening-mini-title">
+              {% if lang == 'ky' %}{{ s.movie.title_ky }}{% else %}{{ s.movie.title_ru }}{% endif %}
+            </div>
+            <div class="screening-mini-hall">{{ s.hall.name }}</div>
+            <div class="screening-mini-price">{{ s.price }} сом</div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══════════ НОВИНКИ ═══════════ -->
+<section class="py-5 bg-section-dark" id="new-movies">
+  <div class="container">
+    <div class="section-header mb-4">
+      <h2 class="section-title">
+        <span class="title-line"></span>
+        {% if lang == 'ky' %}Жаңы кинолор{% else %}Новинки{% endif %}
+        <span class="badge bg-danger ms-2">NEW</span>
+      </h2>
+    </div>
+
+    {% if new_movies %}
+    <div class="row g-4">
+      {% for movie in new_movies %}
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="movie-card">
+          <a href="{% url 'movie_detail' movie.pk %}" class="movie-card-link">
+            <div class="movie-poster-wrap">
+              {% if movie.poster %}
+              <img src="{{ movie.poster.url }}" alt="{{ movie.title_ru }}" class="movie-poster" loading="lazy" />
+              {% else %}
+              <div class="movie-poster no-poster"><i class="fas fa-film fa-3x"></i></div>
+              {% endif %}
+              <div class="movie-overlay">
+                <div class="movie-overlay-content">
+                  <div class="movie-age-badge">{{ movie.age_rating }}</div>
+                  <div class="movie-genres">
+                    {% for g in movie.genres.all|slice:":2" %}
+                    <span class="genre-tag">{% if lang == 'ky' %}{{ g.name_ky }}{% else %}{{ g.name_ru }}{% endif %}</span>
+                    {% endfor %}
+                  </div>
+                </div>
+                <span class="movie-overlay-hint">
+                  <i class="fas fa-info-circle me-1"></i>
+                  {% if lang == 'ky' %}Кененирээк{% else %}Подробнее{% endif %}
+                </span>
+              </div>
+              {% if movie.is_new %}
+              <div class="movie-new-badge">NEW</div>
+              {% endif %}
+            </div>
+            <div class="movie-info">
+              <h5 class="movie-title">
+                {% if lang == 'ky' %}{{ movie.title_ky }}{% else %}{{ movie.title_ru }}{% endif %}
+              </h5>
+              <div class="movie-meta">
+                <span><i class="fas fa-clock me-1 text-danger"></i>{{ movie.duration_display }}</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="empty-state">
+      <i class="fas fa-film fa-4x text-muted mb-3"></i>
+      <p class="text-muted">{% if lang == 'ky' %}Азырча кино жок{% else %}Фильмы скоро появятся{% endif %}</p>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<!-- ═══════════ ВСЕ ФИЛЬМЫ ═══════════ -->
+{% if all_movies %}
+<section class="py-5">
+  <div class="container">
+    <div class="section-header mb-4">
+      <h2 class="section-title">
+        <span class="title-line"></span>
+        {% if lang == 'ky' %}Репертуар{% else %}В прокате{% endif %}
+      </h2>
+      <a href="{% url 'schedule' %}" class="btn btn-outline-danger btn-sm">
+        {% if lang == 'ky' %}Иш-чаралар{% else %}Расписание{% endif %} <i class="fas fa-arrow-right ms-1"></i>
+      </a>
+    </div>
+    <div class="row g-4">
+      {% for movie in all_movies %}
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="movie-card">
+          <a href="{% url 'movie_detail' movie.pk %}" class="movie-card-link">
+            <div class="movie-poster-wrap">
+              {% if movie.poster %}
+              <img src="{{ movie.poster.url }}" alt="{{ movie.title_ru }}" class="movie-poster" loading="lazy" />
+              {% else %}
+              <div class="movie-poster no-poster"><i class="fas fa-film fa-3x"></i></div>
+              {% endif %}
+              <div class="movie-overlay">
+                <div class="movie-overlay-content">
+                  <div class="movie-age-badge">{{ movie.age_rating }}</div>
+                </div>
+                <span class="movie-overlay-hint">
+                  <i class="fas fa-info-circle me-1"></i>
+                  {% if lang == 'ky' %}Кененирээк{% else %}Подробнее{% endif %}
+                </span>
+              </div>
+            </div>
+            <div class="movie-info">
+              <h5 class="movie-title">
+                {% if lang == 'ky' %}{{ movie.title_ky }}{% else %}{{ movie.title_ru }}{% endif %}
+              </h5>
+              <div class="movie-meta">
+                <span><i class="fas fa-clock me-1 text-danger"></i>{{ movie.duration_display }}</span>
+              </div>
+            </div>
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══════════ ПРЕИМУЩЕСТВА ═══════════ -->
+<section class="features-section py-5">
+  <div class="container">
+    <div class="row g-4 text-center">
+      <div class="col-md-3 col-6">
+        <div class="feature-item">
+          <div class="feature-icon"><i class="fas fa-tv"></i></div>
+          <h6>{% if lang == 'ky' %}4K Экран{% else %}4K Экраны{% endif %}</h6>
+          <p class="small text-muted">{% if lang == 'ky' %}Эң жогорку сапат{% else %}Высочайшее качество{% endif %}</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="feature-item">
+          <div class="feature-icon"><i class="fas fa-volume-up"></i></div>
+          <h6>Dolby Atmos</h6>
+          <p class="small text-muted">{% if lang == 'ky' %}3D үн{% else %}Объёмный звук{% endif %}</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="feature-item">
+          <div class="feature-icon"><i class="fas fa-couch"></i></div>
+          <h6>VIP {% if lang == 'ky' %}Залдар{% else %}Залы{% endif %}</h6>
+          <p class="small text-muted">{% if lang == 'ky' %}Ыңгайлуу орундар{% else %}Комфортные кресла{% endif %}</p>
+        </div>
+      </div>
+      <div class="col-md-3 col-6">
+        <div class="feature-item">
+          <div class="feature-icon"><i class="fas fa-mobile-alt"></i></div>
+          <h6>{% if lang == 'ky' %}Онлайн билет{% else %}Онлайн билеты{% endif %}</h6>
+          <p class="small text-muted">{% if lang == 'ky' %}Тез жана оңой{% else %}Быстро и удобно{% endif %}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

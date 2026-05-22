@@ -1,0 +1,155 @@
+/* AKI Cinema — Seat Selection Styles */
+
+.seat-map-card {
+  background: #1a1a1a;
+  border: 1px solid #2e2e2e;
+  border-radius: 14px;
+  padding: 30px 20px;
+}
+
+/* Screen */
+.screen-container {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.screen-label {
+  color: #888;
+  font-size: .75rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.screen-shape {
+  height: 8px;
+  background: linear-gradient(to bottom, rgba(200,16,46,.6), transparent);
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  margin: 0 auto;
+  max-width: 600px;
+  box-shadow: 0 -4px 20px rgba(200,16,46,.3);
+}
+
+/* Legend */
+.seat-legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .8rem;
+  color: #888;
+}
+.seat-demo {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px 5px 3px 3px;
+  border: 1px solid transparent;
+}
+.seat-demo.free     { background: #2a2a2a; border-color: #444; }
+.seat-demo.selected { background: #c8102e; border-color: #e8213e; }
+.seat-demo.booked   { background: #3a3a3a; border-color: #333; }
+
+/* Seat map */
+.seat-map {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.seat-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.row-label {
+  width: 24px;
+  text-align: center;
+  font-size: .75rem;
+  color: #555;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.seats-in-row {
+  display: flex;
+  gap: 5px;
+}
+
+/* Individual seat button */
+.seat {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px 6px 4px 4px;
+  border: 1px solid #444;
+  font-size: .7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 0;
+}
+
+/* Seat backrest visual */
+.seat::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 2px;
+  right: 2px;
+  height: 4px;
+  border-radius: 3px 3px 0 0;
+  background: inherit;
+  filter: brightness(1.3);
+}
+
+.seat.free {
+  background: #2a2a2a;
+  border-color: #555;
+  color: #aaa;
+}
+.seat.free:hover {
+  background: #c8102e;
+  border-color: #e8213e;
+  color: #fff;
+  transform: scale(1.15);
+  z-index: 2;
+}
+.seat.free::before { background: #3a3a3a; }
+
+.seat.selected {
+  background: #c8102e;
+  border-color: #e8213e;
+  color: #fff;
+  transform: scale(1.1);
+  box-shadow: 0 0 10px rgba(200,16,46,.5);
+}
+.seat.selected::before { background: #e8213e; }
+
+.seat.booked {
+  background: #222;
+  border-color: #333;
+  color: #444;
+  cursor: not-allowed;
+}
+.seat.booked::before { background: #2a2a2a; }
+
+/* Responsive */
+@media (max-width: 576px) {
+  .seat {
+    width: 26px;
+    height: 26px;
+    font-size: .6rem;
+    border-radius: 4px 4px 3px 3px;
+  }
+  .seats-in-row { gap: 3px; }
+  .seat-row { gap: 4px; }
+  .seat-map-card { padding: 20px 10px; }
+}

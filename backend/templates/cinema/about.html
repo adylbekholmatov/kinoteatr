@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if lang == 'ky' %}Биз жөнүндө{% else %}О нас{% endif %} — AKI Cinema{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="page-title">
+      <i class="fas fa-info-circle text-danger me-3"></i>
+      {% if lang == 'ky' %}Биз жөнүндө{% else %}О нас{% endif %}
+    </h1>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row g-5 align-items-center mb-5">
+    <div class="col-lg-6">
+      <h2 class="section-title mb-4">
+        <span class="title-line"></span>
+        {% if lang == 'ky' %}AKI Cinema жөнүндө{% else %}О кинотеатре AKI{% endif %}
+      </h2>
+      <p class="text-muted">
+        {% if lang == 'ky' %}
+          AKI Cinema — Бишкектеги эң заманбап жана ыңгайлуу кинотеатр. Биз кино жакшы көрүүчүлөргө эң жакшы шартты сунуш кылабыз.
+        {% else %}
+          AKI Cinema — самый современный и комфортабельный кинотеатр Бишкека. Мы предлагаем лучшие условия для любителей кино.
+        {% endif %}
+      </p>
+      <p class="text-muted">
+        {% if lang == 'ky' %}
+          6 зал, анын ичинде 3 VIP зал, 4K экрандар жана Dolby Atmos үн системасы менен биз сизге унутулгус тажрыйба сунуш кылабыз.
+        {% else %}
+          6 залов, в том числе 3 VIP зала, экраны 4K и звуковая система Dolby Atmos — мы предлагаем незабываемые впечатления.
+        {% endif %}
+      </p>
+      <div class="row g-3 mt-3">
+        <div class="col-6">
+          <div class="about-stat">
+            <div class="about-stat-num">6</div>
+            <div class="about-stat-label">{% if lang == 'ky' %}Зал{% else %}Залов{% endif %}</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="about-stat">
+            <div class="about-stat-num">3</div>
+            <div class="about-stat-label">VIP {% if lang == 'ky' %}Зал{% else %}Залов{% endif %}</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="about-stat">
+            <div class="about-stat-num">246</div>
+            <div class="about-stat-label">{% if lang == 'ky' %}Орундар{% else %}Мест{% endif %}</div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="about-stat">
+            <div class="about-stat-num">4K</div>
+            <div class="about-stat-label">{% if lang == 'ky' %}Сапат{% else %}Качество{% endif %}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6">
+      <div class="about-image-grid">
+        <div class="about-img-card"><i class="fas fa-tv fa-3x text-danger"></i><p>4K Projection</p></div>
+        <div class="about-img-card"><i class="fas fa-volume-up fa-3x text-danger"></i><p>Dolby Atmos</p></div>
+        <div class="about-img-card"><i class="fas fa-couch fa-3x text-danger"></i><p>VIP Seats</p></div>
+        <div class="about-img-card"><i class="fas fa-utensils fa-3x text-danger"></i><p>{% if lang == 'ky' %}Тамак-аш{% else %}Кафе{% endif %}</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hall info -->
+  <div class="section-header mb-4">
+    <h2 class="section-title"><span class="title-line"></span>{% if lang == 'ky' %}Биздин залдар{% else %}Наши залы{% endif %}</h2>
+  </div>
+  <div class="row g-4">
+    <div class="col-md-6">
+      <div class="aki-card p-4">
+        <h5 class="text-danger mb-3"><i class="fas fa-film me-2"></i>{% if lang == 'ky' %}Кадимки залдар{% else %}Стандартные залы{% endif %}</h5>
+        <ul class="text-muted">
+          <li>{% if lang == 'ky' %}3 зал, ар биринде 42 орун{% else %}3 зала по 42 места{% endif %}</li>
+          <li>{% if lang == 'ky' %}4K экран{% else %}Экраны 4K{% endif %}</li>
+          <li>Dolby Digital Sound</li>
+          <li>{% if lang == 'ky' %}Ыңгайлуу креслолор{% else %}Комфортные кресла{% endif %}</li>
+        </ul>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="aki-card p-4 border border-danger">
+        <h5 class="text-danger mb-3"><i class="fas fa-star me-2"></i>VIP {% if lang == 'ky' %}залдар{% else %}Залы{% endif %}</h5>
+        <ul class="text-muted">
+          <li>{% if lang == 'ky' %}3 VIP зал, ар биринде 20 орун{% else %}3 VIP зала по 20 мест{% endif %}</li>
+          <li>4K Laser Projection</li>
+          <li>Dolby Atmos</li>
+          <li>{% if lang == 'ky' %}Жумшак люкс креслолор{% else %}Мягкие люкс-кресла{% endif %}</li>
+          <li>{% if lang == 'ky' %}Жеке тейлөө{% else %}Персональное обслуживание{% endif %}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

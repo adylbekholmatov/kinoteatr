@@ -1,0 +1,105 @@
+<Window x:Class="AKICinemaAdmin.Views.LoginView"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="AKI Cinema — Вход"
+        Width="460" Height="560"
+        WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Background="{StaticResource BgBrush}"
+        WindowStyle="None"
+        AllowsTransparency="True">
+
+    <Window.Resources>
+        <Style TargetType="TextBlock" x:Key="Label">
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+    </Window.Resources>
+
+    <Border Background="{StaticResource BgBrush}"
+            BorderBrush="{StaticResource BorderBrush}"
+            BorderThickness="1"
+            CornerRadius="12">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Title bar -->
+            <Border Grid.Row="0" Background="{StaticResource Bg2Brush}"
+                    CornerRadius="12,12,0,0"
+                    Padding="20,14"
+                    MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Grid>
+                    <StackPanel Orientation="Horizontal">
+                        <Rectangle Width="4" Height="20" Fill="{StaticResource AccentBrush}" RadiusX="2" RadiusY="2"/>
+                        <TextBlock Margin="10,0,0,0" VerticalAlignment="Center">
+                            <Run Text="AKI" Foreground="{StaticResource AccentBrush}" FontWeight="Bold" FontSize="16"/>
+                            <Run Text="CINEMA" Foreground="White" FontSize="16"/>
+                            <Run Text="  Admin" Foreground="{StaticResource MutedBrush}" FontSize="13"/>
+                        </TextBlock>
+                    </StackPanel>
+                    <Button HorizontalAlignment="Right"
+                            Width="28" Height="28"
+                            Content="✕"
+                            Foreground="{StaticResource MutedBrush}"
+                            Click="CloseButton_Click"
+                            Style="{StaticResource BaseButtonStyle}"
+                            Background="Transparent"
+                            FontSize="14"/>
+                </Grid>
+            </Border>
+
+            <!-- Login form -->
+            <StackPanel Grid.Row="1" Margin="40,36,40,20" VerticalAlignment="Center">
+
+                <!-- Icon -->
+                <Border Width="64" Height="64" CornerRadius="32"
+                        Background="#1AC8102E" HorizontalAlignment="Center" Margin="0,0,0,20">
+                    <TextBlock Text="🎬" FontSize="28" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                </Border>
+
+                <TextBlock Text="Добро пожаловать" Foreground="White" FontSize="20"
+                           FontWeight="SemiBold" HorizontalAlignment="Center" Margin="0,0,0,4"/>
+                <TextBlock Text="Войдите в систему кассира" Foreground="{StaticResource MutedBrush}"
+                           FontSize="13" HorizontalAlignment="Center" Margin="0,0,0,30"/>
+
+                <!-- Server URL -->
+                <TextBlock Text="Адрес сервера" Style="{StaticResource Label}"/>
+                <TextBox x:Name="ServerUrlBox" Style="{StaticResource AkiTextBox}"
+                         Text="http://127.0.0.1:8000" Margin="0,0,0,16"/>
+
+                <!-- Username -->
+                <TextBlock Text="Логин" Style="{StaticResource Label}"/>
+                <TextBox x:Name="UsernameBox" Style="{StaticResource AkiTextBox}"
+                         Margin="0,0,0,16" KeyDown="Input_KeyDown"/>
+
+                <!-- Password -->
+                <TextBlock Text="Пароль" Style="{StaticResource Label}"/>
+                <PasswordBox x:Name="PasswordBox" Style="{StaticResource AkiPasswordBox}"
+                             Margin="0,0,0,24" KeyDown="Input_KeyDown"/>
+
+                <!-- Error message -->
+                <Border x:Name="ErrorBorder" Visibility="Collapsed"
+                        Background="#1AEF4444" BorderBrush="#EF4444"
+                        BorderThickness="1" CornerRadius="6" Padding="12,8" Margin="0,0,0,16">
+                    <TextBlock x:Name="ErrorText" Foreground="#EF4444" FontSize="13" TextWrapping="Wrap"/>
+                </Border>
+
+                <!-- Login button -->
+                <Button x:Name="LoginButton" Content="Войти в систему"
+                        Style="{StaticResource RedButtonStyle}"
+                        FontSize="14" Height="44"
+                        Click="LoginButton_Click"/>
+            </StackPanel>
+
+            <!-- Footer -->
+            <TextBlock Grid.Row="2" Text="© 2026 AKI Cinema"
+                       Foreground="{StaticResource MutedBrush}" FontSize="11"
+                       HorizontalAlignment="Center" Margin="0,0,0,16"/>
+        </Grid>
+    </Border>
+</Window>

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}AKI Cinema — {% if lang == 'ky' %}Иш-чаралар{% else %}Расписание{% endif %}{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="page-title">
+      <i class="fas fa-calendar-alt text-danger me-3"></i>
+      {% if lang == 'ky' %}Сеанстар расписаниеси{% else %}Расписание сеансов{% endif %}
+    </h1>
+  </div>
+</div>
+
+<div class="container py-5">
+
+  <!-- Date strip -->
+  <div class="date-strip mb-5">
+    {% for d in dates %}
+    <a href="?date={{ d|date:'Y-m-d' }}"
+       class="date-btn {% if d == selected_date %}active{% endif %}">
+      <span class="date-btn-day">{{ d|date:"D"|slice:":2" }}</span>
+      <span class="date-btn-num">{{ d|date:"d" }}</span>
+      <span class="date-btn-month">{{ d|date:"M" }}</span>
+    </a>
+    {% endfor %}
+  </div>
+
+  {% if movies_screenings %}
+    {% for item in movies_screenings %}
+    <div class="schedule-row mb-4">
+      <div class="row g-0 align-items-start">
+        <!-- Poster -->
+        <div class="col-auto">
+          <a href="{% url 'movie_detail' item.movie.pk %}">
+            {% if item.movie.poster %}
+            <img src="{{ item.movie.poster.url }}" alt="{{ item.movie.title_ru }}"
+                 class="schedule-poster" />
+            {% else %}
+            <div class="schedule-poster no-poster"><i class="fas fa-film fa-2x"></i></div>
+            {% endif %}
+          </a>
+        </div>
+        <!-- Info -->
+        <div class="col">
+          <div class="schedule-info p-3 p-md-4">
+            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+              <a href="{% url 'movie_detail' item.movie.pk %}" class="schedule-movie-title">
+                {% if lang == 'ky' %}{{ item.movie.title_ky }}{% else %}{{ item.movie.title_ru }}{% endif %}
+              </a>
+              <span class="age-badge">{{ item.movie.age_rating }}</span>
+              {% if item.movie.is_new %}<span class="badge bg-danger">NEW</span>{% endif %}
+            </div>
+            <div class="schedule-movie-meta mb-3">
+              <span><i class="fas fa-clock text-danger me-1"></i>{{ item.movie.duration_display }}</span>
+              {% if item.movie.director %}
+              <span class="ms-3"><i class="fas fa-user text-danger me-1"></i>{{ item.movie.director }}</span>
+              {% endif %}
+              {% for g in item.movie.genres.all|slice:":3" %}
+              <span class="ms-2 genre-tag-sm">{% if lang == 'ky' %}{{ g.name_ky }}{% else %}{{ g.name_ru }}{% endif %}</span>
+              {% endfor %}
+            </div>
+            <!-- Screenings -->
+            <div class="screening-time-list">
+              {% for s in item.screenings %}
+              <a href="{% url 'seat_selection' s.id %}" class="screening-time-btn {% if s.hall.hall_type == 'vip' %}vip{% endif %}">
+                <span class="st-time">{{ s.start_time|date:"H:i" }}</span>
+                <span class="st-hall">{{ s.hall.name }}</span>
+                <span class="st-price">{{ s.price }} сом</span>
+                {% if s.hall.hall_type == 'vip' %}<span class="st-vip-label">VIP</span>{% endif %}
+              </a>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  {% else %}
+  <div class="empty-state text-center py-5">
+    <i class="fas fa-calendar-times fa-4x text-muted mb-4"></i>
+    <h4 class="text-muted">
+      {% if lang == 'ky' %}Бул күнү сеанс жок{% else %}На выбранную дату сеансов нет{% endif %}
+    </h4>
+    <p class="text-muted">{% if lang == 'ky' %}Башка күндү тандаңыз{% else %}Выберите другую дату{% endif %}</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

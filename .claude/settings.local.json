@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build *)",
+      "Bash(xargs cat)",
+      "Bash(venv/Scripts/python.exe manage.py collectstatic --noinput)",
+      "Bash(venv/Scripts/python.exe manage.py check)",
+      "Bash(venv\\\\Scripts\\\\python manage.py check)",
+      "Bash(venv\\\\Scripts\\\\python.exe manage.py check)",
+      "Bash(python manage.py migrate)",
+      "Bash(cd /mnt/c/Users/user/Desktop/kinoteatr/backend && python manage.py migrate 2>&1)",
+      "PowerShell(cd C:\\\\Users\\\\user\\\\Desktop\\\\kinoteatr\\\\backend; $env:DJANGO_SETTINGS_MODULE=\"kinoteatr.settings\"; .\\\\venv\\\\Scripts\\\\python.exe -c \"import django; django.setup\\(\\); from cinema import views, paybox; print\\('OK'\\)\" 2>&1)"
+    ]
+  }
+}

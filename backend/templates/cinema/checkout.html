@@ -1,0 +1,100 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if lang == 'ky' %}Маалымат{% else %}Оформление{% endif %} — AKI Cinema{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="page-title">
+      <i class="fas fa-user-edit text-danger me-3"></i>
+      {% if lang == 'ky' %}Байланыш маалыматы{% else %}Контактные данные{% endif %}
+    </h1>
+  </div>
+</div>
+
+<div class="container py-5">
+  <!-- Steps -->
+  <div class="checkout-steps mb-5">
+    <div class="step active"><div class="step-num">1</div><div class="step-label">{% if lang == 'ky' %}Маалымат{% else %}Данные{% endif %}</div></div>
+    <div class="step-line"></div>
+    <div class="step"><div class="step-num">2</div><div class="step-label">{% if lang == 'ky' %}Төлөм{% else %}Оплата{% endif %}</div></div>
+    <div class="step-line"></div>
+    <div class="step"><div class="step-num">3</div><div class="step-label">{% if lang == 'ky' %}Бүттү{% else %}Готово{% endif %}</div></div>
+  </div>
+
+  <div class="row g-5 justify-content-center">
+    <div class="col-lg-6">
+      <div class="aki-card p-4">
+        <h4 class="mb-4">
+          {% if lang == 'ky' %}Байланыш маалыматын толтуруңуз{% else %}Заполните контактные данные{% endif %}
+        </h4>
+        <form method="post">
+          {% csrf_token %}
+          <input type="hidden" name="seats" value="{{ seat_ids_str }}">
+
+          <div class="mb-3">
+            <label class="form-label" style="color:var(--text-dim);">
+              <i class="fas fa-envelope text-danger me-1"></i> Email *
+            </label>
+            {{ form.email }}
+            {% if form.email.errors %}<div class="text-danger small mt-1">{{ form.email.errors.0 }}</div>{% endif %}
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" style="color:var(--text-dim);">
+              <i class="fas fa-phone text-danger me-1"></i>
+              {% if lang == 'ky' %}Телефон{% else %}Телефон{% endif %} *
+            </label>
+            {{ form.phone }}
+            {% if form.phone.errors %}<div class="text-danger small mt-1">{{ form.phone.errors.0 }}</div>{% endif %}
+          </div>
+
+          <button type="submit" class="btn btn-danger btn-lg w-100">
+            <i class="fas fa-credit-card me-2"></i>
+            {% if lang == 'ky' %}Paybox аркылуу төлөө{% else %}Оплатить через Paybox{% endif %}
+          </button>
+          <div class="text-center mt-3" style="font-size:.8rem; color:var(--muted);">
+            <i class="fas fa-shield-alt text-danger me-1"></i>
+            {% if lang == 'ky' %}Коопсуз SSL төлөм · Paybox.money{% else %}Безопасная оплата · Paybox.money{% endif %}
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Order summary sidebar -->
+    <div class="col-lg-4">
+      <div class="aki-card p-4">
+        <h5 class="mb-3 text-danger">
+          <i class="fas fa-receipt me-2"></i>
+          {% if lang == 'ky' %}Буйрутма{% else %}Заказ{% endif %}
+        </h5>
+        <div class="mb-3">
+          <div class="fw-bold">{% if lang == 'ky' %}{{ screening.movie.title_ky }}{% else %}{{ screening.movie.title_ru }}{% endif %}</div>
+          <div class="text-muted small mt-1">
+            <i class="fas fa-calendar me-1"></i>{{ screening.start_time|date:"d.m.Y H:i" }}<br>
+            <i class="fas fa-door-open me-1"></i>{{ screening.hall.name }}
+          </div>
+        </div>
+        <hr class="border-secondary">
+        <div class="mb-2">
+          <strong>{% if lang == 'ky' %}Тандалган орундар:{% else %}Выбранные места:{% endif %}</strong>
+          <ul class="mt-2 ps-3">
+            {% for seat in seats %}
+            <li class="text-muted small">
+              {% if lang == 'ky' %}Ряд{% else %}Ряд{% endif %} {{ seat.row }},
+              {% if lang == 'ky' %}Орун{% else %}Место{% endif %} {{ seat.number }}
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        <hr class="border-secondary">
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="fw-bold">{% if lang == 'ky' %}Жалпы:{% else %}Итого:{% endif %}</span>
+          <span class="total-amount fs-5">{{ total }} сом</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

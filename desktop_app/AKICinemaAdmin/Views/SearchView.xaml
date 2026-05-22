@@ -1,0 +1,84 @@
+<Page x:Class="AKICinemaAdmin.Views.SearchView"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Background="{StaticResource BgBrush}"
+      Title="Поиск брони">
+
+    <Grid Margin="32">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Text="Поиск бронирования"
+                   Foreground="White" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,24"/>
+
+        <Grid Grid.Row="1" Margin="0,0,0,24">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="12"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBox x:Name="SearchBox" Grid.Column="0"
+                     Style="{StaticResource AkiTextBox}"
+                     Height="42"
+                     KeyDown="SearchBox_KeyDown"/>
+            <Button Grid.Column="2" Content="🔍 Найти"
+                    Style="{StaticResource RedButtonStyle}"
+                    Height="42" Padding="20,0"
+                    Click="SearchButton_Click"/>
+        </Grid>
+
+        <!-- Result -->
+        <Border Grid.Row="2" x:Name="ResultPanel" Visibility="Collapsed"
+                Background="{StaticResource Bg2Brush}"
+                BorderBrush="{StaticResource BorderBrush}"
+                BorderThickness="1" CornerRadius="12" Padding="24">
+            <StackPanel>
+                <Grid Margin="0,0,0,16">
+                    <TextBlock Text="Бронирование найдено" Foreground="{StaticResource SuccessBrush}"
+                               FontSize="15" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="BookingCodeDisplay" HorizontalAlignment="Right"
+                               Foreground="{StaticResource AccentBrush}"
+                               FontFamily="Courier New" FontSize="14" FontWeight="Bold"/>
+                </Grid>
+                <Separator Background="{StaticResource BorderBrush}" Margin="0,0,0,16"/>
+                <Grid Margin="0,0,0,10">
+                    <TextBlock Text="Фильм:" Foreground="{StaticResource MutedBrush}" FontSize="13"/>
+                    <TextBlock x:Name="ResultMovie" HorizontalAlignment="Right" Foreground="White" FontSize="13" FontWeight="SemiBold"/>
+                </Grid>
+                <Grid Margin="0,0,0,10">
+                    <TextBlock Text="Сеанс:" Foreground="{StaticResource MutedBrush}" FontSize="13"/>
+                    <TextBlock x:Name="ResultTime" HorizontalAlignment="Right" Foreground="White" FontSize="13"/>
+                </Grid>
+                <Grid Margin="0,0,0,10">
+                    <TextBlock Text="Зал:" Foreground="{StaticResource MutedBrush}" FontSize="13"/>
+                    <TextBlock x:Name="ResultHall" HorizontalAlignment="Right" Foreground="White" FontSize="13"/>
+                </Grid>
+                <Grid Margin="0,0,0,10">
+                    <TextBlock Text="Телефон:" Foreground="{StaticResource MutedBrush}" FontSize="13"/>
+                    <TextBlock x:Name="ResultPhone" HorizontalAlignment="Right" Foreground="White" FontSize="13"/>
+                </Grid>
+                <Grid Margin="0,0,0,10">
+                    <TextBlock Text="Места:" Foreground="{StaticResource MutedBrush}" FontSize="13"/>
+                    <WrapPanel x:Name="ResultSeats" HorizontalAlignment="Right"/>
+                </Grid>
+                <Separator Background="{StaticResource BorderBrush}" Margin="0,8,0,16"/>
+                <Grid>
+                    <TextBlock Text="Сумма:" Foreground="{StaticResource MutedBrush}" FontSize="13"/>
+                    <TextBlock x:Name="ResultTotal" HorizontalAlignment="Right"
+                               Foreground="{StaticResource AccentBrush}"
+                               FontSize="18" FontWeight="Bold"/>
+                </Grid>
+            </StackPanel>
+        </Border>
+
+        <Border Grid.Row="2" x:Name="ErrorPanel" Visibility="Collapsed"
+                Background="#1AEF4444" BorderBrush="#EF4444"
+                BorderThickness="1" CornerRadius="8" Padding="20">
+            <TextBlock x:Name="ErrorText" Foreground="#EF4444" FontSize="14"
+                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        </Border>
+    </Grid>
+</Page>

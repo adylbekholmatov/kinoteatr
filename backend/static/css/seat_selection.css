@@ -1,0 +1,194 @@
+/* AKI Cinema — Seat Selection Styles
+   Uses CSS variables from style.css (auto-adapts to theme) */
+
+.seat-map-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 30px 20px;
+  transition: background .3s, border-color .3s;
+}
+
+/* Screen */
+.screen-container {
+  text-align: center;
+  margin-bottom: 30px;
+}
+.screen-label {
+  color: var(--muted);
+  font-size: .75rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+.screen-shape {
+  height: 8px;
+  background: linear-gradient(to bottom, rgba(200,16,46,.6), transparent);
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  margin: 0 auto;
+  max-width: 600px;
+  box-shadow: 0 -4px 20px rgba(200,16,46,.3);
+}
+
+/* Legend */
+.seat-legend {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .8rem;
+  color: var(--muted);
+}
+.seat-demo {
+  width: 22px;
+  height: 22px;
+  border-radius: 5px 5px 3px 3px;
+  border: 1px solid transparent;
+}
+
+/* Free seat demo: adapts per theme */
+.seat-demo.free {
+  background: var(--bg3);
+  border-color: var(--border);
+}
+body.theme-light .seat-demo.free {
+  background: #e8e8f0;
+  border-color: #bbb;
+}
+.seat-demo.selected { background: #c8102e; border-color: #e8213e; }
+.seat-demo.booked   { background: var(--bg4); border-color: var(--border); }
+body.theme-light .seat-demo.booked { background: #d0d0d8; border-color: #b0b0b8; }
+
+/* Seat map */
+.seat-map {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.seat-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.row-label {
+  width: 24px;
+  text-align: center;
+  font-size: .75rem;
+  color: var(--muted);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.seats-in-row {
+  display: flex;
+  gap: 5px;
+}
+
+/* Individual seat button */
+.seat {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px 6px 4px 4px;
+  font-size: .7rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  padding: 0;
+}
+
+/* Seat backrest */
+.seat::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 2px;
+  right: 2px;
+  height: 4px;
+  border-radius: 3px 3px 0 0;
+  background: inherit;
+  filter: brightness(1.3);
+}
+
+/* ── Dark theme seats ── */
+.seat.free {
+  background: #2e2e2e;
+  border: 1px solid #505050;
+  color: #999;
+}
+.seat.free:hover {
+  background: #c8102e;
+  border-color: #e8213e;
+  color: #fff;
+  transform: scale(1.15);
+  z-index: 2;
+  box-shadow: 0 4px 14px rgba(200,16,46,.45);
+}
+.seat.free::before { background: #3a3a3a; }
+
+/* ── Light theme seats ── */
+body.theme-light .seat.free {
+  background: #e4e4ee;
+  border: 1px solid #b8b8cc;
+  color: #555;
+}
+body.theme-light .seat.free:hover {
+  background: #c8102e;
+  border-color: #e8213e;
+  color: #fff;
+  transform: scale(1.15);
+  z-index: 2;
+  box-shadow: 0 4px 14px rgba(200,16,46,.4);
+}
+body.theme-light .seat.free::before { background: #c8c8dc; }
+
+/* ── Selected (same in both themes) ── */
+.seat.selected {
+  background: #c8102e;
+  border: 1px solid #e8213e;
+  color: #fff;
+  transform: scale(1.1);
+  box-shadow: 0 0 12px rgba(200,16,46,.55);
+}
+.seat.selected::before { background: #e8213e; }
+
+/* ── Booked ── */
+.seat.booked {
+  background: #252525;
+  border: 1px solid #333;
+  color: #444;
+  cursor: not-allowed;
+}
+.seat.booked::before { background: #2e2e2e; }
+
+body.theme-light .seat.booked {
+  background: #c8c8d4;
+  border: 1px solid #aaaabb;
+  color: #999;
+  cursor: not-allowed;
+}
+body.theme-light .seat.booked::before { background: #b8b8c8; }
+
+/* Responsive */
+@media (max-width: 576px) {
+  .seat {
+    width: 26px;
+    height: 26px;
+    font-size: .6rem;
+    border-radius: 4px 4px 3px 3px;
+  }
+  .seats-in-row { gap: 3px; }
+  .seat-row { gap: 4px; }
+  .seat-map-card { padding: 20px 10px; }
+}

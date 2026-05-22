@@ -1,0 +1,176 @@
+{% extends 'panel/base_panel.html' %}
+
+{% block page_tab_title %}{{ booking.booking_code }}{% endblock %}
+{% block title %}Детали бронирования{% endblock %}
+{% block nav_bookings %}active{% endblock %}
+
+{% block content %}
+
+<!-- Breadcrumb -->
+<div class="panel-breadcrumb">
+  <a href="/panel/"><i class="fa-solid fa-house" style="font-size:11px;"></i></a>
+  <span class="sep">/</span>
+  <a href="/panel/bookings/">Бронирования</a>
+  <span class="sep">/</span>
+  <span class="current">{{ booking.booking_code }}</span>
+</div>
+
+<div class="row g-3">
+
+  <!-- ── LEFT: Main info ───────────────────────────────── -->
+  <div class="col-12 col-lg-8">
+
+    <!-- Booking header card -->
+    <div class="panel-card mb-3">
+      <div class="panel-card-header">
+        <span class="panel-card-title">
+          <i class="fa-solid fa-ticket" style="color:var(--red); margin-right:8px;"></i>
+          <span style="font-family:monospace; font-size:17px; color:var(--red);">{{ booking.booking_code }}</span>
+        </span>
+        <span class="badge-{{ booking.status }}" style="font-size:13px; padding:5px 14px;">
+          {{ booking.get_status_display }}
+        </span>
+      </div>
+      <div class="panel-card-body">
+
+        <!-- Movie + screening -->
+        <div style="display:flex; gap:18px; align-items:flex-start; padding-bottom:20px; border-bottom:1px solid var(--border); margin-bottom:20px;">
+          {% if booking.screening.movie.poster %}
+            <img src="{{ booking.screening.movie.poster.url }}" alt="" style="width:70px; height:100px; object-fit:cover; border-radius:8px; border:1px solid var(--border); flex-shrink:0;">
+          {% endif %}
+          <div>
+            <div style="font-size:18px; font-weight:800; margin-bottom:6px;">{{ booking.screening.movie.title_ru }}</div>
+            <div style="display:flex; flex-wrap:wrap; gap:12px; font-size:13px; color:var(--muted);">
+              <span><i class="fa-solid fa-calendar" style="color:var(--red); margin-right:4px;"></i>{{ booking.screening.start_time|date:"d.m.Y" }}</span>
+              <span><i class="fa-solid fa-clock" style="color:var(--red); margin-right:4px;"></i>{{ booking.screening.start_time|date:"H:i" }}</span>
+              <span><i class="fa-solid fa-door-open" style="color:var(--red); margin-right:4px;"></i>{{ booking.screening.hall.name }}</span>
+              <span><i class="fa-solid fa-tag" style="color:var(--red); margin-right:4px;"></i>{{ booking.screening.price }} с. / место</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Seats -->
+        <div style="margin-bottom:20px;">
+          <div style="font-size:11px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.8px; margin-bottom:12px;">
+            Забронированные места
+          </div>
+          <div style="display:flex; flex-wrap:wrap; gap:8px;">
+            {% for bs in booking.booked_seats.all %}
+              <div style="background:rgba(200,16,46,0.12); border:1px solid rgba(200,16,46,0.3); border-radius:8px; padding:8px 14px; text-align:center;">
+                <div style="font-size:10px; color:var(--muted); text-transform:uppercase; letter-spacing:0.5px;">Ряд {{ bs.seat.row }}</div>
+                <div style="font-size:20px; font-weight:800; color:var(--red); line-height:1.2;">{{ bs.seat.number }}</div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Total -->
+        <div style="display:flex; align-items:center; justify-content:space-between; background:var(--bg3); border-radius:10px; padding:16px 20px;">
+          <span style="font-size:13px; color:var(--muted);">Итого оплачено</span>
+          <span style="font-size:24px; font-weight:800; color:var(--text);">{{ booking.total_amount }} <span style="font-size:14px; color:var(--muted);">сом</span></span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Customer info -->
+    <div class="panel-card mb-3">
+      <div class="panel-card-header">
+        <span class="panel-card-title"><i class="fa-solid fa-user" style="color:var(--red); margin-right:8px;"></i>Данные клиента</span>
+      </div>
+      <div class="panel-card-body">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+
+          <div>
+            <div style="font-size:11px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:5px;">Email</div>
+            <div style="font-size:14px;">{{ booking.email }}</div>
+          </div>
+
+          <div>
+            <div style="font-size:11px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:5px;">Телефон</div>
+            <div style="font-size:14px;">{{ booking.phone }}</div>
+          </div>
+
+          {% if booking.address %}
+          <div style="grid-column:1/-1;">
+            <div style="font-size:11px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:5px;">Адрес</div>
+            <div style="font-size:14px;">{{ booking.address }}</div>
+          </div>
+          {% endif %}
+
+          {% if booking.user %}
+          <div style="grid-column:1/-1;">
+            <div style="font-size:11px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:5px;">Аккаунт</div>
+            <div style="font-size:14px;">{{ booking.user.username }} ({{ booking.user.email }})</div>
+          </div>
+          {% endif %}
+
+          {% if booking.card_last4 %}
+          <div>
+            <div style="font-size:11px; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:0.6px; margin-bottom:5px;">Карта</div>
+            <div style="font-size:14px;">•••• •••• •••• {{ booking.card_last4 }}</div>
+          </div>
+          {% endif %}
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ── RIGHT: Actions ────────────────────────────────── -->
+  <div class="col-12 col-lg-4">
+
+    <!-- Change status -->
+    <div class="panel-card mb-3">
+      <div class="panel-card-header">
+        <span class="panel-card-title"><i class="fa-solid fa-sliders" style="color:var(--red); margin-right:8px;"></i>Изменить статус</span>
+      </div>
+      <div class="panel-card-body">
+        <form method="post" action="/panel/bookings/{{ booking.pk }}/status/">
+          {% csrf_token %}
+          <div style="margin-bottom:14px;">
+            <label class="form-label-panel">Новый статус</label>
+            {{ form.status }}
+          </div>
+          <button type="submit" class="btn-panel-primary" style="width:100%; justify-content:center;">
+            <i class="fa-solid fa-floppy-disk"></i> Сохранить
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Meta info -->
+    <div class="panel-card mb-3">
+      <div class="panel-card-header">
+        <span class="panel-card-title"><i class="fa-solid fa-circle-info" style="color:var(--red); margin-right:8px;"></i>Информация</span>
+      </div>
+      <div class="panel-card-body" style="display:flex; flex-direction:column; gap:12px;">
+
+        <div style="display:flex; justify-content:space-between; font-size:13px;">
+          <span style="color:var(--muted);">Создано</span>
+          <span>{{ booking.created_at|date:"d.m.Y H:i" }}</span>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; font-size:13px;">
+          <span style="color:var(--muted);">Мест забронировано</span>
+          <span style="font-weight:700;">{{ booking.booked_seats.count }}</span>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; font-size:13px;">
+          <span style="color:var(--muted);">Источник</span>
+          <span>{% if booking.is_admin_booking %}Касса{% else %}Сайт{% endif %}</span>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Back button -->
+    <a href="/panel/bookings/" class="btn-panel-secondary" style="width:100%; justify-content:center;">
+      <i class="fa-solid fa-arrow-left"></i> К списку
+    </a>
+
+  </div>
+</div>
+
+{% endblock %}

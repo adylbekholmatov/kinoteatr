@@ -1,0 +1,271 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if lang == 'ky' %}Орун тандоо{% else %}Выбор мест{% endif %} — AKI Cinema{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/seat_selection.css' %}" />
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb aki-breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'index' %}">{% if lang == 'ky' %}Башкы бет{% else %}Главная{% endif %}</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'movie_detail' screening.movie.pk %}">
+          {% if lang == 'ky' %}{{ screening.movie.title_ky }}{% else %}{{ screening.movie.title_ru }}{% endif %}
+        </a></li>
+        <li class="breadcrumb-item active">{% if lang == 'ky' %}Орун тандоо{% else %}Выбор мест{% endif %}</li>
+      </ol>
+    </nav>
+    <h1 class="page-title">
+      {% if lang == 'ky' %}{{ screening.movie.title_ky }}{% else %}{{ screening.movie.title_ru }}{% endif %}
+    </h1>
+    <div class="screening-info-bar">
+      <span><i class="fas fa-calendar text-danger me-1"></i>{{ screening.start_time|date:"d.m.Y" }}</span>
+      <span><i class="fas fa-clock text-danger me-1"></i>{{ screening.start_time|date:"H:i" }}</span>
+      <span><i class="fas fa-door-open text-danger me-1"></i>{{ screening.hall.name }}</span>
+      {% if screening.hall.hall_type == 'vip' %}
+      <span class="badge bg-warning text-dark"><i class="fas fa-star me-1"></i>VIP</span>
+      {% endif %}
+      <span><i class="fas fa-tag text-danger me-1"></i>{{ screening.price }} сом / {% if lang == 'ky' %}орун{% else %}место{% endif %}</span>
+    </div>
+  </div>
+</div>
+
+<div class="container py-4">
+  <div class="row g-4">
+    <!-- Seat map -->
+    <div class="col-lg-8">
+      <div class="seat-map-card">
+        <!-- Screen -->
+        <div class="screen-container">
+          <div class="screen-label">
+            <span>{% if lang == 'ky' %}ЭКРАН{% else %}ЭКРАН{% endif %}</span>
+          </div>
+          <div class="screen-shape"></div>
+        </div>
+
+        <!-- Legend -->
+        <div class="seat-legend">
+          <div class="legend-item"><div class="seat-demo free"></div><span>{% if lang == 'ky' %}Бош{% else %}Свободно{% endif %}</span></div>
+          <div class="legend-item"><div class="seat-demo selected"></div><span>{% if lang == 'ky' %}Тандалган{% else %}Выбрано{% endif %}</span></div>
+          <div class="legend-item"><div class="seat-demo booked"></div><span>{% if lang == 'ky' %}Алынган{% else %}Занято{% endif %}</span></div>
+        </div>
+
+        <!-- Seats -->
+        <div class="seat-map" id="seatMap">
+          {% for row_num, seats in rows.items %}
+          <div class="seat-row">
+            <div class="row-label">{{ row_num }}</div>
+            <div class="seats-in-row">
+              {% for seat in seats %}
+              <button
+                class="seat {% if seat.is_booked %}booked{% else %}free{% endif %}"
+                data-seat-id="{{ seat.id }}"
+                data-row="{{ row_num }}"
+                data-num="{{ seat.number }}"
+                {% if seat.is_booked %}disabled{% endif %}
+                title="{% if lang == 'ky' %}Ряд{% else %}Ряд{% endif %} {{ row_num }}, {% if lang == 'ky' %}Орун{% else %}Место{% endif %} {{ seat.number }}"
+              >{{ seat.number }}</button>
+              {% endfor %}
+            </div>
+            <div class="row-label">{{ row_num }}</div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Order summary -->
+    <div class="col-lg-4">
+      <div class="order-summary sticky-top" style="top:80px;">
+        <h5 class="order-summary-title">
+          <i class="fas fa-receipt text-danger me-2"></i>
+          {% if lang == 'ky' %}Буйрутма{% else %}Ваш заказ{% endif %}
+        </h5>
+
+        <div class="order-movie-info mb-3">
+          {% if screening.movie.poster %}
+          <img src="{{ screening.movie.poster.url }}" class="order-poster" alt="" />
+          {% endif %}
+          <div>
+            <div class="fw-bold">{% if lang == 'ky' %}{{ screening.movie.title_ky }}{% else %}{{ screening.movie.title_ru }}{% endif %}</div>
+            <div class="text-muted small">{{ screening.start_time|date:"d.m.Y H:i" }}</div>
+            <div class="text-muted small">{{ screening.hall.name }}</div>
+          </div>
+        </div>
+
+        <div class="selected-seats-list mb-3" id="selectedSeatsList">
+          <p class="text-muted small" id="noSeatsMsg">
+            {% if lang == 'ky' %}Орун тандаңыз{% else %}Выберите места на схеме{% endif %}
+          </p>
+        </div>
+
+        <div class="order-total mb-4">
+          <div class="d-flex justify-content-between">
+            <span>{% if lang == 'ky' %}Орундар{% else %}Мест{% endif %}: <strong id="seatsCount">0</strong></span>
+            <span>{% if lang == 'ky' %}Баасы{% else %}Цена{% endif %}: <strong>{{ screening.price }} сом</strong></span>
+          </div>
+          <div class="total-line mt-2">
+            <span>{% if lang == 'ky' %}Жалпы сумма{% else %}Итого{% endif %}:</span>
+            <span class="total-amount" id="totalAmount">0 сом</span>
+          </div>
+        </div>
+
+        {% if user.is_authenticated %}
+        {# ── Авторизованный пользователь: обычная форма оформления ── #}
+        <form method="get" action="{% url 'checkout' screening.id %}" id="checkoutForm">
+          <input type="hidden" name="seats" id="selectedSeatsInput" value="">
+          <button type="submit" class="btn btn-danger btn-lg w-100" id="checkoutBtn" disabled>
+            <i class="fas fa-lock me-2"></i>
+            {% if lang == 'ky' %}Төлөмгө өтүү{% else %}Перейти к оплате{% endif %}
+            <span id="checkoutTotal"></span>
+          </button>
+        </form>
+
+        {% else %}
+        {# ── Гость: скрытые поля, кнопка ведёт на логин с возвратом ── #}
+        <input type="hidden" id="selectedSeatsInput" value="">
+
+        <div style="background:rgba(200,16,46,0.08); border:1px solid rgba(200,16,46,0.25); border-radius:12px; padding:14px 16px; margin-bottom:14px; display:flex; align-items:flex-start; gap:10px;">
+          <i class="fas fa-user-lock text-danger mt-1" style="font-size:16px; flex-shrink:0;"></i>
+          <div style="font-size:13px; line-height:1.5;">
+            {% if lang == 'ky' %}
+              Билет заказтоо үчүн <strong>аккаунтка кирүү</strong> талап кылынат.
+            {% else %}
+              Для покупки билетов необходимо <strong>войти в аккаунт</strong>.
+            {% endif %}
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-danger btn-lg w-100" id="checkoutBtn"
+                disabled onclick="redirectToLogin()">
+          <i class="fas fa-sign-in-alt me-2"></i>
+          {% if lang == 'ky' %}Кирүү жана улантуу{% else %}Войти и продолжить{% endif %}
+          <span id="checkoutTotal"></span>
+        </button>
+        {% endif %}
+
+        <p class="text-muted small text-center mt-2">
+          <i class="fas fa-shield-alt text-danger me-1"></i>
+          {% if lang == 'ky' %}Коопсуз төлөм{% else %}Безопасная оплата{% endif %}
+        </p>
+
+        {% if not user.is_authenticated %}
+        <p class="text-center mt-2" style="font-size:13px;">
+          {% if lang == 'ky' %}
+            Аккаунтуңуз жокпу?
+            <a href="{% url 'register' %}" class="text-danger fw-bold">Катталуу</a>
+          {% else %}
+            Нет аккаунта?
+            <a href="{% url 'register' %}" class="text-danger fw-bold">Зарегистрироваться</a>
+          {% endif %}
+        </p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var PRICE        = parseFloat("{{ screening.price }}") || 0;
+  var LANG         = "{{ lang }}";
+  var IS_AUTH      = {% if user.is_authenticated %}true{% else %}false{% endif %};
+  var SCREENING_ID = "{{ screening.id }}";
+  var LOGIN_URL    = "{% url 'login' %}";
+
+  var selectedIds = {};
+
+  var seatsCountEl    = document.getElementById('seatsCount');
+  var totalAmountEl   = document.getElementById('totalAmount');
+  var checkoutTotalEl = document.getElementById('checkoutTotal');
+  var checkoutBtn     = document.getElementById('checkoutBtn');
+  var seatsInput      = document.getElementById('selectedSeatsInput');
+  var seatsList       = document.getElementById('selectedSeatsList');
+  var noSeatsMsg      = document.getElementById('noSeatsMsg');
+
+  function getSelectedCount() {
+    return Object.keys(selectedIds).length;
+  }
+
+  function updateSummary() {
+    var count = getSelectedCount();
+    var total = count * PRICE;
+
+    seatsCountEl.textContent    = count;
+    totalAmountEl.textContent   = Math.round(total) + ' сом';
+    checkoutTotalEl.textContent = count > 0 ? ' — ' + Math.round(total) + ' сом' : '';
+    seatsInput.value = Object.keys(selectedIds).join(',');
+    checkoutBtn.disabled = (count === 0);
+
+    // Refresh selected seats list
+    seatsList.querySelectorAll('.selected-seat-item').forEach(function(el){ el.remove(); });
+    noSeatsMsg.style.display = count === 0 ? '' : 'none';
+
+    Object.keys(selectedIds).forEach(function(id) {
+      var info = selectedIds[id];
+      var item = document.createElement('div');
+      item.className = 'selected-seat-item d-flex justify-content-between align-items-center mb-1';
+      var rowLabel  = LANG === 'ky' ? 'Ряд'  : 'Ряд';
+      var seatLabel = LANG === 'ky' ? 'Орун' : 'Место';
+      item.innerHTML =
+        '<span class="text-light small"><i class="fas fa-chair text-danger me-1"></i>' +
+        rowLabel + ' ' + info.row + ', ' + seatLabel + ' ' + info.num + '</span>' +
+        '<span class="text-danger small fw-bold">' + Math.round(PRICE) + ' сом</span>';
+      seatsList.appendChild(item);
+    });
+  }
+
+  function handleSeatClick() {
+    var id  = this.getAttribute('data-seat-id');
+    var row = this.getAttribute('data-row');
+    var num = this.getAttribute('data-num');
+
+    if (selectedIds[id]) {
+      delete selectedIds[id];
+      this.classList.remove('selected');
+      this.classList.add('free');
+    } else {
+      selectedIds[id] = { row: row, num: num };
+      this.classList.remove('free');
+      this.classList.add('selected');
+    }
+    updateSummary();
+  }
+
+  // Attach click to every free seat
+  document.querySelectorAll('.seat.free').forEach(function(btn) {
+    btn.addEventListener('click', handleSeatClick);
+  });
+
+  // Prevent submit with no seats (authenticated users)
+  var form = document.getElementById('checkoutForm');
+  if (form) {
+    form.addEventListener('submit', function(e) {
+      if (getSelectedCount() === 0) {
+        e.preventDefault();
+        alert(LANG === 'ky' ? 'Орун тандаңыз!' : 'Выберите хотя бы одно место!');
+      }
+    });
+  }
+
+  updateSummary();
+})();
+
+// Redirect guests to login, then back to checkout with their seats
+function redirectToLogin() {
+  var seatsVal = document.getElementById('selectedSeatsInput').value;
+  if (!seatsVal) return;
+  var LANG = "{{ lang }}";
+  var SCREENING_ID = "{{ screening.id }}";
+  var prefix = LANG === 'ky' ? '/ky' : '';
+  var nextUrl = prefix + '/checkout/' + SCREENING_ID + '/?seats=' + encodeURIComponent(seatsVal);
+  window.location.href = "{% url 'login' %}?next=" + encodeURIComponent(nextUrl);
+}
+</script>
+{% endblock %}

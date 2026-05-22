@@ -1,0 +1,150 @@
+{% extends 'panel/base_panel.html' %}
+
+{% block page_tab_title %}Dashboard{% endblock %}
+{% block title %}Dashboard{% endblock %}
+{% block nav_dashboard %}active{% endblock %}
+
+{% block content %}
+<div class="panel-breadcrumb">
+  <i class="fa-solid fa-house" style="font-size:11px;"></i>
+  <span class="sep">/</span>
+  <span class="current">Dashboard</span>
+</div>
+
+<!-- Stat Cards -->
+<div class="row g-3 mb-4">
+  <div class="col-12 col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon">🎬</div>
+      <div>
+        <div class="stat-value">{{ movie_count }}</div>
+        <div class="stat-label">Всего фильмов</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon">🎞️</div>
+      <div>
+        <div class="stat-value">{{ screening_count_today }}</div>
+        <div class="stat-label">Сеансов сегодня</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon">🎟️</div>
+      <div>
+        <div class="stat-value">{{ bookings_today_count }}</div>
+        <div class="stat-label">Бронирований сегодня</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-sm-6 col-xl-3">
+    <div class="stat-card">
+      <div class="stat-icon">💰</div>
+      <div>
+        <div class="stat-value">{{ revenue_today|floatformat:0 }}</div>
+        <div class="stat-label">Выручка сегодня (сом)</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Actions + Recent Bookings -->
+<div class="row g-3">
+
+  <!-- Recent Bookings -->
+  <div class="col-12 col-xl-8">
+    <div class="panel-card">
+      <div class="panel-card-header">
+        <span class="panel-card-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--red); margin-right:8px;"></i>Последние бронирования</span>
+        <span style="font-size:12px; color:var(--muted);">5 последних</span>
+      </div>
+      <div style="overflow-x:auto;">
+        {% if recent_bookings %}
+        <table class="panel-table">
+          <thead>
+            <tr>
+              <th>Код</th>
+              <th>Фильм</th>
+              <th>Статус</th>
+              <th>Сумма</th>
+              <th>Дата</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for booking in recent_bookings %}
+            <tr>
+              <td>
+                <a href="/panel/bookings/{{ booking.pk }}/"
+                   style="font-family: monospace; font-size:13px; color: var(--red); text-decoration:none; font-weight:600;">
+                  {{ booking.booking_code }}
+                </a>
+              </td>
+              <td>
+                <span style="font-weight:600;">{{ booking.screening.movie.title_ru }}</span>
+                <div style="font-size:11px; color:var(--muted);">{{ booking.screening.start_time|date:"d.m.Y H:i" }}</div>
+              </td>
+              <td>
+                {% if booking.status == 'paid' %}
+                  <span class="badge-paid">Оплачено</span>
+                {% elif booking.status == 'pending' %}
+                  <span class="badge-pending">Ожидание</span>
+                {% elif booking.status == 'reserved' %}
+                  <span class="badge-reserved">Резерв</span>
+                {% else %}
+                  <span class="badge-cancelled">Отменено</span>
+                {% endif %}
+              </td>
+              <td style="font-weight:600;">{{ booking.total_amount|floatformat:0 }} <span style="color:var(--muted);font-size:11px;">сом</span></td>
+              <td style="color:var(--muted); font-size:12px;">{{ booking.created_at|date:"d.m.Y H:i" }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <div class="empty-state">
+          <div class="empty-icon">🎟️</div>
+          <p>Бронирований пока нет</p>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="col-12 col-xl-4">
+    <div class="panel-card" style="height:100%;">
+      <div class="panel-card-header">
+        <span class="panel-card-title"><i class="fa-solid fa-bolt" style="color:var(--red); margin-right:8px;"></i>Быстрые действия</span>
+      </div>
+      <div class="panel-card-body" style="display:flex; flex-direction:column; gap:10px;">
+        <a href="/panel/movies/add/" class="btn-panel-primary" style="justify-content:center; padding:13px;">
+          <i class="fa-solid fa-plus"></i> Добавить фильм
+        </a>
+        <a href="/panel/screenings/add/" class="btn-panel-primary" style="justify-content:center; padding:13px; background:rgba(99,102,241,0.85);">
+          <i class="fa-solid fa-plus"></i> Добавить сеанс
+        </a>
+        <a href="/panel/halls/add/" class="btn-panel-primary" style="justify-content:center; padding:13px; background:rgba(16,185,129,0.8);">
+          <i class="fa-solid fa-plus"></i> Добавить зал
+        </a>
+        <hr style="border-color:var(--border); margin:4px 0;">
+        <a href="/panel/movies/" class="btn-panel-secondary" style="justify-content:center; padding:13px;">
+          <i class="fa-solid fa-film"></i> Все фильмы
+        </a>
+        <a href="/panel/screenings/" class="btn-panel-secondary" style="justify-content:center; padding:13px;">
+          <i class="fa-solid fa-clapperboard"></i> Все сеансы
+        </a>
+        <a href="/panel/bookings/" class="btn-panel-secondary" style="justify-content:center; padding:13px;">
+          <i class="fa-solid fa-ticket"></i> Все бронирования
+        </a>
+        <a href="/panel/halls/" class="btn-panel-secondary" style="justify-content:center; padding:13px;">
+          <i class="fa-solid fa-door-open"></i> Залы
+        </a>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

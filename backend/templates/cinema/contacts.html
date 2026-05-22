@@ -1,0 +1,68 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if lang == 'ky' %}Байланыш{% else %}Контакты{% endif %} — AKI Cinema{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="page-title">
+      <i class="fas fa-map-marker-alt text-danger me-3"></i>
+      {% if lang == 'ky' %}Байланыш{% else %}Контакты{% endif %}
+    </h1>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row g-5">
+    <div class="col-lg-5">
+      <h3 class="section-title mb-4"><span class="title-line"></span>{% if lang == 'ky' %}Биздин дарек{% else %}Наш адрес{% endif %}</h3>
+      <div class="contact-info-list">
+        <div class="contact-info-item">
+          <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div>
+            <div class="contact-label">{% if lang == 'ky' %}Дарек{% else %}Адрес{% endif %}</div>
+            <div class="contact-value">г. Бишкек, ул. Киевская, 114</div>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-icon"><i class="fas fa-phone"></i></div>
+          <div>
+            <div class="contact-label">{% if lang == 'ky' %}Телефон{% else %}Телефон{% endif %}</div>
+            <div class="contact-value"><a href="tel:+996312123456">+996 312 123 456</a></div>
+            <div class="contact-value"><a href="tel:+996700123456">+996 700 123 456</a></div>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+          <div>
+            <div class="contact-label">Email</div>
+            <div class="contact-value"><a href="mailto:info@akicinema.kg">info@akicinema.kg</a></div>
+          </div>
+        </div>
+        <div class="contact-info-item">
+          <div class="contact-icon"><i class="fas fa-clock"></i></div>
+          <div>
+            <div class="contact-label">{% if lang == 'ky' %}Иш убактысы{% else %}Режим работы{% endif %}</div>
+            <div class="contact-value">{% if lang == 'ky' %}Күн сайын: 09:00 – 00:00{% else %}Ежедневно: 09:00 – 00:00{% endif %}</div>
+          </div>
+        </div>
+      </div>
+      <div class="social-links mt-4">
+        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+      </div>
+    </div>
+    <div class="col-lg-7">
+      <div class="map-placeholder aki-card p-0 overflow-hidden" style="height:400px;">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2924.5!2d74.5897!3d42.8746!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDLCsDUyJzI4LjYiTiA3NMKwMzUnMjIuOSJF!5e0!3m2!1sru!2skg!4v1234567890"
+          width="100%" height="400" style="border:0;" allowfullscreen="" loading="lazy">
+        </iframe>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

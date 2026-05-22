@@ -1,0 +1,198 @@
+{% load static i18n %}
+<!DOCTYPE html>
+<html lang="{{ current_lang }}">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}AKI Cinema{% endblock %}</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Oswald:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  {% block extra_css %}{% endblock %}
+</head>
+<body class="theme-{{ site_theme }}">
+
+<!-- ═══════════════════ NAVBAR ═══════════════════ -->
+<nav class="navbar navbar-expand-lg navbar-dark aki-navbar sticky-top">
+  <div class="container">
+    <a class="navbar-brand aki-brand" href="{% url 'index' %}">
+      <span class="brand-aki">AKI</span><span class="brand-cinema">CINEMA</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navMenu">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" href="{% url 'index' %}">
+            {% if current_lang == 'ky' %}Башкы бет{% else %}Главная{% endif %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'schedule' %}active{% endif %}" href="{% url 'schedule' %}">
+            {% if current_lang == 'ky' %}Иш-чаралар{% else %}Расписание{% endif %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'about' %}active{% endif %}" href="{% url 'about' %}">
+            {% if current_lang == 'ky' %}Биз жөнүндө{% else %}О нас{% endif %}
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.resolver_match.url_name == 'contacts' %}active{% endif %}" href="{% url 'contacts' %}">
+            {% if current_lang == 'ky' %}Байланыш{% else %}Контакты{% endif %}
+          </a>
+        </li>
+      </ul>
+
+      <!-- Controls: theme + language -->
+      <div class="navbar-controls me-3">
+
+        <!-- Language switcher -->
+        <form action="{% url 'set_language_custom' %}" method="post" style="margin:0;">
+          {% csrf_token %}
+          <input name="next" type="hidden" value="{{ request.path }}">
+          <div class="nc-lang">
+            <button type="submit" name="language" value="ru"
+                    class="nc-lang-btn {% if current_lang == 'ru' %}is-on{% endif %}">
+              RU
+            </button>
+            <button type="submit" name="language" value="ky"
+                    class="nc-lang-btn {% if current_lang == 'ky' %}is-on{% endif %}">
+              KY
+            </button>
+          </div>
+        </form>
+
+        <!-- Theme toggle -->
+        <form action="{% url 'set_theme' %}" method="post" style="margin:0;">
+          {% csrf_token %}
+          <input name="next" type="hidden" value="{{ request.path }}">
+          <button type="submit" name="theme"
+                  value="{% if site_theme == 'light' %}dark{% else %}light{% endif %}"
+                  class="nc-theme {% if site_theme == 'light' %}is-light{% endif %}"
+                  title="{% if site_theme == 'light' %}Тёмная тема{% else %}Светлая тема{% endif %}">
+            {% if site_theme == 'light' %}
+              <i class="fa-solid fa-moon"></i>
+            {% else %}
+              <i class="fa-solid fa-sun"></i>
+            {% endif %}
+          </button>
+        </form>
+
+      </div>
+
+      <!-- Auth -->
+      <div class="d-flex align-items-center gap-2">
+        {% if user.is_authenticated %}
+          <a href="{% url 'my_bookings' %}" class="nav-auth-btn nav-auth-ghost">
+            <i class="fas fa-ticket-alt"></i>
+            {% if current_lang == 'ky' %}Билеттерим{% else %}Мои билеты{% endif %}
+          </a>
+          <a href="{% url 'logout' %}" class="nav-auth-btn nav-auth-exit">
+            <i class="fas fa-sign-out-alt"></i>
+            {% if current_lang == 'ky' %}Чыгуу{% else %}Выйти{% endif %}
+          </a>
+        {% else %}
+          <a href="{% url 'login' %}" class="nav-auth-btn nav-auth-ghost">
+            <i class="fas fa-sign-in-alt"></i>
+            {% if current_lang == 'ky' %}Кирүү{% else %}Войти{% endif %}
+          </a>
+          <a href="{% url 'register' %}" class="nav-auth-btn nav-auth-solid">
+            <i class="fas fa-user-plus"></i>
+            {% if current_lang == 'ky' %}Катталуу{% else %}Регистрация{% endif %}
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════ MESSAGES ═══════════════════ -->
+{% if messages %}
+<div class="container mt-3">
+  {% for msg in messages %}
+  <div class="alert alert-{{ msg.tags }} alert-dismissible fade show" role="alert">
+    {{ msg }}
+    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- ═══════════════════ CONTENT ═══════════════════ -->
+<main>
+  {% block content %}{% endblock %}
+</main>
+
+<!-- ═══════════════════ FOOTER ═══════════════════ -->
+<footer class="aki-footer mt-5">
+  <div class="container">
+    <div class="row gy-4">
+      <div class="col-lg-4">
+        <div class="aki-brand mb-3">
+          <span class="brand-aki">AKI</span><span class="brand-cinema">CINEMA</span>
+        </div>
+        <p class="text-muted small">
+          {% if current_lang == 'ky' %}
+            Кызыл-Кыядагы эң жакшы кинотеатр. Сизди кино дүйнөсүнө чакырабыз!
+          {% else %}
+            Лучший кинотеатр в Кызыл-Кыя. Приглашаем вас в мир кино!
+          {% endif %}
+        </p>
+        <div class="social-links mt-3">
+          <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+          <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+          <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
+          <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+        </div>
+      </div>
+      <div class="col-lg-2 col-sm-6">
+        <h6 class="footer-heading">
+          {% if current_lang == 'ky' %}Навигация{% else %}Навигация{% endif %}
+        </h6>
+        <ul class="footer-links">
+          <li><a href="{% url 'index' %}">{% if current_lang == 'ky' %}Башкы бет{% else %}Главная{% endif %}</a></li>
+          <li><a href="{% url 'schedule' %}">{% if current_lang == 'ky' %}Иш-чаралар{% else %}Расписание{% endif %}</a></li>
+          <li><a href="{% url 'about' %}">{% if current_lang == 'ky' %}Биз жөнүндө{% else %}О нас{% endif %}</a></li>
+          <li><a href="{% url 'contacts' %}">{% if current_lang == 'ky' %}Байланыш{% else %}Контакты{% endif %}</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3 col-sm-6">
+        <h6 class="footer-heading">
+          {% if current_lang == 'ky' %}Маалымат{% else %}Информация{% endif %}
+        </h6>
+        <ul class="footer-links">
+          <li><a href="#">{% if current_lang == 'ky' %}Билет кайтаруу{% else %}Возврат билетов{% endif %}</a></li>
+          <li><a href="#">{% if current_lang == 'ky' %}Конфиденциалдуулук{% else %}Политика конфиденциальности{% endif %}</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+      <div class="col-lg-3">
+        <h6 class="footer-heading">
+          {% if current_lang == 'ky' %}Байланыш{% else %}Контакты{% endif %}
+        </h6>
+        <ul class="footer-contacts">
+          <li><i class="fas fa-map-marker-alt text-danger me-2"></i>г. Бишкек, ул. Киевская, 114</li>
+          <li><i class="fas fa-phone text-danger me-2"></i>+996 312 123 456</li>
+          <li><i class="fas fa-envelope text-danger me-2"></i>info@akicinema.kg</li>
+          <li><i class="fas fa-clock text-danger me-2"></i>
+            {% if current_lang == 'ky' %}Күн сайын 09:00 – 00:00{% else %}Ежедневно 09:00 – 00:00{% endif %}
+          </li>
+        </ul>
+      </div>
+    </div>
+    <hr class="footer-divider" />
+    <div class="footer-bottom">
+      <p>&copy; 2026 AKI Cinema. {% if current_lang == 'ky' %}Бардык укуктар корголгон.{% else %}Все права защищены.{% endif %}</p>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="{% static 'js/main.js' %}"></script>
+{% block extra_js %}{% endblock %}
+</body>
+</html>

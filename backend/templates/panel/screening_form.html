@@ -1,0 +1,173 @@
+{% extends 'panel/base_panel.html' %}
+
+{% block page_tab_title %}{{ page_title }}{% endblock %}
+{% block title %}{{ page_title }}{% endblock %}
+{% block nav_screenings %}active{% endblock %}
+
+{% block content %}
+<div class="panel-breadcrumb">
+  <a href="/panel/"><i class="fa-solid fa-house" style="font-size:11px;"></i></a>
+  <span class="sep">/</span>
+  <a href="/panel/screenings/">Сеансы</a>
+  <span class="sep">/</span>
+  <span class="current">{{ page_title }}</span>
+</div>
+
+<div class="row justify-content-center">
+  <div class="col-12 col-md-10 col-lg-7 col-xl-6">
+
+    <form method="post">
+      {% csrf_token %}
+
+      <!-- Movie select -->
+      <div class="panel-card mb-3">
+        <div class="panel-card-header">
+          <span class="panel-card-title"><i class="fa-solid fa-film" style="color:var(--red); margin-right:8px;"></i>Фильм</span>
+        </div>
+        <div class="panel-card-body" style="display:flex; flex-direction:column; gap:8px;">
+          <label class="form-label-panel">{{ form.movie.label }} <span style="color:var(--red);">*</span></label>
+          {{ form.movie }}
+          {% if form.movie.errors %}
+            {% for err in form.movie.errors %}
+              <div class="field-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ err }}</div>
+            {% endfor %}
+          {% endif %}
+
+          <!-- Movie info preview -->
+          <div id="moviePreview" style="display:none; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:12px; margin-top:4px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <img id="moviePreviewPoster" src="" alt="" style="width:40px; height:56px; object-fit:cover; border-radius:5px; border:1px solid var(--border);">
+              <div>
+                <div id="moviePreviewTitle" style="font-weight:600; font-size:14px;"></div>
+                <div id="moviePreviewInfo" style="font-size:12px; color:var(--muted); margin-top:2px;"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hall select -->
+      <div class="panel-card mb-3">
+        <div class="panel-card-header">
+          <span class="panel-card-title"><i class="fa-solid fa-building" style="color:var(--red); margin-right:8px;"></i>Зал</span>
+        </div>
+        <div class="panel-card-body">
+          <label class="form-label-panel">{{ form.hall.label }} <span style="color:var(--red);">*</span></label>
+          {{ form.hall }}
+          {% if form.hall.errors %}
+            {% for err in form.hall.errors %}
+              <div class="field-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ err }}</div>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Date/time + Price -->
+      <div class="panel-card mb-3">
+        <div class="panel-card-header">
+          <span class="panel-card-title"><i class="fa-regular fa-clock" style="color:var(--red); margin-right:8px;"></i>Расписание и цена</span>
+        </div>
+        <div class="panel-card-body" style="display:flex; flex-direction:column; gap:16px;">
+
+          <div>
+            <label class="form-label-panel">{{ form.start_time.label }} <span style="color:var(--red);">*</span></label>
+            {{ form.start_time }}
+            {% if form.start_time.errors %}
+              {% for err in form.start_time.errors %}
+                <div class="field-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ err }}</div>
+              {% endfor %}
+            {% endif %}
+            <div style="font-size:11px; color:var(--muted); margin-top:4px;">Дата и время начала сеанса</div>
+          </div>
+
+          <div>
+            <label class="form-label-panel">{{ form.price.label }} <span style="color:var(--red);">*</span></label>
+            <div style="position:relative;">
+              {{ form.price }}
+              <span style="position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--muted); font-size:12px; pointer-events:none;">сом</span>
+            </div>
+            {% if form.price.errors %}
+              {% for err in form.price.errors %}
+                <div class="field-error"><i class="fa-solid fa-triangle-exclamation"></i> {{ err }}</div>
+              {% endfor %}
+            {% endif %}
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Status toggle -->
+      <div class="panel-card mb-4">
+        <div class="panel-card-header">
+          <span class="panel-card-title"><i class="fa-solid fa-toggle-on" style="color:var(--red); margin-right:8px;"></i>Настройки</span>
+        </div>
+        <div class="panel-card-body">
+          <div class="toggle-row">
+            <div>
+              <div class="toggle-label-text">{{ form.is_active.label }}</div>
+              <div class="toggle-sublabel">Сеанс доступен для бронирования</div>
+            </div>
+            <div class="form-switch">
+              {{ form.is_active }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+        <button type="submit" class="btn-panel-primary" style="padding:13px 32px; font-size:15px;">
+          <i class="fa-solid {% if is_edit %}fa-floppy-disk{% else %}fa-plus{% endif %}"></i>
+          {% if is_edit %}Сохранить изменения{% else %}Добавить сеанс{% endif %}
+        </button>
+        <a href="/panel/screenings/" class="btn-panel-secondary" style="padding:13px 24px;">
+          <i class="fa-solid fa-xmark"></i> Отмена
+        </a>
+        {% if is_edit %}
+        <form method="post" action="/panel/screenings/{{ screening.pk }}/delete/" style="margin-left:auto;" onsubmit="return confirm('Удалить этот сеанс?');">
+          {% csrf_token %}
+          <button type="submit" class="btn-delete" style="padding:13px 20px; font-size:13px;">
+            <i class="fa-solid fa-trash"></i> Удалить
+          </button>
+        </form>
+        {% endif %}
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+  // Movie preview panel
+  const movieSelect = document.getElementById('id_movie');
+
+  function updateMoviePreview() {
+    const selectedId = movieSelect.value;
+    const preview    = document.getElementById('moviePreview');
+
+    if (!selectedId) {
+      preview.style.display = 'none';
+      return;
+    }
+
+    const selectedOpt = movieSelect.options[movieSelect.selectedIndex];
+    document.getElementById('moviePreviewTitle').textContent = selectedOpt.text;
+    document.getElementById('moviePreviewInfo').textContent  = '';
+    document.getElementById('moviePreviewPoster').src        = '';
+    preview.style.display = 'block';
+
+    // Fetch extra info via existing AJAX endpoint
+    fetch('/ajax/screenings/' + selectedId + '/')
+      .then(r => r.json())
+      .catch(() => null);
+  }
+
+  if (movieSelect) {
+    movieSelect.addEventListener('change', updateMoviePreview);
+    // Init on load (for edit mode)
+    if (movieSelect.value) updateMoviePreview();
+  }
+</script>
+{% endblock %}
