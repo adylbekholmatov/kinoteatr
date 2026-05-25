@@ -1,9 +1,9 @@
-from django.core.management.base import BaseCommand
+﻿from django.core.management.base import BaseCommand
 from cinema.models import Hall, Seat, Genre
 
 
 class Command(BaseCommand):
-    help = 'Создаёт залы, места и жанры для кинотеатра AKI'
+    help = 'Создаёт залы, места и жанры для кинотеатра Байэл'
 
     def handle(self, *args, **options):
         # Жанры
@@ -48,4 +48,4 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(f'Зал "{name}" уже существует')
 
-        self.stdout.write(self.style.SUCCESS('\nНастройка кинотеатра AKI завершена!'))
+        self.stdout.write(self.style.SUCCESS('\nНастройка кинотеатра Байэл завершена!'))

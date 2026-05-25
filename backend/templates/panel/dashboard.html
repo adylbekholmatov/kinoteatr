@@ -11,8 +11,11 @@
   <span class="current">Dashboard</span>
 </div>
 
-<!-- Stat Cards -->
-<div class="row g-3 mb-4">
+<!-- ── Stat cards: TODAY ── -->
+<div style="font-size:11px; text-transform:uppercase; letter-spacing:.8px; color:var(--muted); margin-bottom:10px; font-weight:700;">
+  <i class="fa-solid fa-calendar-day me-1"></i> Сегодня
+</div>
+<div class="row g-3 mb-2">
   <div class="col-12 col-sm-6 col-xl-3">
     <div class="stat-card">
       <div class="stat-icon">🎬</div>
@@ -51,15 +54,86 @@
   </div>
 </div>
 
-<!-- Quick Actions + Recent Bookings -->
-<div class="row g-3">
+<!-- ── Stat cards: MONTH ── -->
+<div style="font-size:11px; text-transform:uppercase; letter-spacing:.8px; color:var(--muted); margin:18px 0 10px; font-weight:700;">
+  <i class="fa-solid fa-calendar-month me-1"></i> За месяц — {{ month_label }}
+</div>
+<div class="row g-3 mb-4">
+  <div class="col-12 col-sm-6 col-xl-6">
+    <div class="stat-card" style="border-left: 3px solid var(--red);">
+      <div class="stat-icon">🎟️</div>
+      <div>
+        <div class="stat-value" style="font-size:2rem;">{{ bookings_month_count }}</div>
+        <div class="stat-label">Бронирований за месяц</div>
+      </div>
+    </div>
+  </div>
+  <div class="col-12 col-sm-6 col-xl-6">
+    <div class="stat-card" style="border-left: 3px solid #22c55e;">
+      <div class="stat-icon">💵</div>
+      <div>
+        <div class="stat-value" style="font-size:2rem; color:#22c55e;">{{ revenue_month|floatformat:0 }}</div>
+        <div class="stat-label">Выручка за месяц (сом)</div>
+      </div>
+    </div>
+  </div>
+</div>
 
-  <!-- Recent Bookings -->
+<!-- ── Chart + Recent ── -->
+<div class="row g-3 mb-3">
+  <!-- Revenue chart -->
   <div class="col-12 col-xl-8">
     <div class="panel-card">
       <div class="panel-card-header">
+        <span class="panel-card-title">
+          <i class="fa-solid fa-chart-line" style="color:var(--red); margin-right:8px;"></i>
+          Выручка по дням — {{ month_label }}
+        </span>
+      </div>
+      <div style="padding:16px 20px 20px; position:relative; height:220px;">
+        <canvas id="revenueChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="col-12 col-xl-4">
+    <div class="panel-card" style="height:100%;">
+      <div class="panel-card-header">
+        <span class="panel-card-title"><i class="fa-solid fa-bolt" style="color:var(--red); margin-right:8px;"></i>Быстрые действия</span>
+      </div>
+      <div class="panel-card-body" style="display:flex; flex-direction:column; gap:10px;">
+        <a href="/panel/movies/add/" class="btn-panel-primary" style="justify-content:center; padding:11px;">
+          <i class="fa-solid fa-plus"></i> Добавить фильм
+        </a>
+        <a href="/panel/screenings/add/" class="btn-panel-primary" style="justify-content:center; padding:11px; background:rgba(99,102,241,0.85);">
+          <i class="fa-solid fa-plus"></i> Добавить сеанс
+        </a>
+        <a href="/panel/halls/add/" class="btn-panel-primary" style="justify-content:center; padding:11px; background:rgba(16,185,129,0.8);">
+          <i class="fa-solid fa-plus"></i> Добавить зал
+        </a>
+        <hr style="border-color:var(--border); margin:4px 0;">
+        <a href="/panel/movies/" class="btn-panel-secondary" style="justify-content:center; padding:11px;">
+          <i class="fa-solid fa-film"></i> Все фильмы
+        </a>
+        <a href="/panel/screenings/" class="btn-panel-secondary" style="justify-content:center; padding:11px;">
+          <i class="fa-solid fa-clapperboard"></i> Все сеансы
+        </a>
+        <a href="/panel/bookings/" class="btn-panel-secondary" style="justify-content:center; padding:11px;">
+          <i class="fa-solid fa-ticket"></i> Все бронирования
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Recent Bookings ── -->
+<div class="row g-3">
+  <div class="col-12">
+    <div class="panel-card">
+      <div class="panel-card-header">
         <span class="panel-card-title"><i class="fa-solid fa-clock-rotate-left" style="color:var(--red); margin-right:8px;"></i>Последние бронирования</span>
-        <span style="font-size:12px; color:var(--muted);">5 последних</span>
+        <a href="/panel/bookings/" style="font-size:12px; color:var(--red); text-decoration:none;">Все →</a>
       </div>
       <div style="overflow-x:auto;">
         {% if recent_bookings %}
@@ -112,39 +186,90 @@
       </div>
     </div>
   </div>
-
-  <!-- Quick Actions -->
-  <div class="col-12 col-xl-4">
-    <div class="panel-card" style="height:100%;">
-      <div class="panel-card-header">
-        <span class="panel-card-title"><i class="fa-solid fa-bolt" style="color:var(--red); margin-right:8px;"></i>Быстрые действия</span>
-      </div>
-      <div class="panel-card-body" style="display:flex; flex-direction:column; gap:10px;">
-        <a href="/panel/movies/add/" class="btn-panel-primary" style="justify-content:center; padding:13px;">
-          <i class="fa-solid fa-plus"></i> Добавить фильм
-        </a>
-        <a href="/panel/screenings/add/" class="btn-panel-primary" style="justify-content:center; padding:13px; background:rgba(99,102,241,0.85);">
-          <i class="fa-solid fa-plus"></i> Добавить сеанс
-        </a>
-        <a href="/panel/halls/add/" class="btn-panel-primary" style="justify-content:center; padding:13px; background:rgba(16,185,129,0.8);">
-          <i class="fa-solid fa-plus"></i> Добавить зал
-        </a>
-        <hr style="border-color:var(--border); margin:4px 0;">
-        <a href="/panel/movies/" class="btn-panel-secondary" style="justify-content:center; padding:13px;">
-          <i class="fa-solid fa-film"></i> Все фильмы
-        </a>
-        <a href="/panel/screenings/" class="btn-panel-secondary" style="justify-content:center; padding:13px;">
-          <i class="fa-solid fa-clapperboard"></i> Все сеансы
-        </a>
-        <a href="/panel/bookings/" class="btn-panel-secondary" style="justify-content:center; padding:13px;">
-          <i class="fa-solid fa-ticket"></i> Все бронирования
-        </a>
-        <a href="/panel/halls/" class="btn-panel-secondary" style="justify-content:center; padding:13px;">
-          <i class="fa-solid fa-door-open"></i> Залы
-        </a>
-      </div>
-    </div>
-  </div>
-
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+<script>
+(function () {
+  var labels   = {{ chart_labels|safe }};
+  var revenue  = {{ chart_revenue|safe }};
+  var bookings = {{ chart_bookings|safe }};
+
+  var isDark = document.body.classList.contains('theme-dark') ||
+               !document.body.classList.contains('theme-light');
+  var gridColor  = isDark ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.07)';
+  var labelColor = isDark ? '#9ca3af' : '#6b7280';
+
+  var ctx = document.getElementById('revenueChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Выручка (сом)',
+          data: revenue,
+          backgroundColor: 'rgba(200,16,46,0.75)',
+          borderColor: 'rgba(200,16,46,1)',
+          borderWidth: 1,
+          borderRadius: 4,
+          yAxisID: 'y',
+        },
+        {
+          label: 'Бронирований',
+          data: bookings,
+          type: 'line',
+          borderColor: '#22c55e',
+          backgroundColor: 'rgba(34,197,94,0.1)',
+          borderWidth: 2,
+          pointRadius: 3,
+          pointBackgroundColor: '#22c55e',
+          tension: 0.3,
+          yAxisID: 'y2',
+          fill: true,
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: {
+          labels: { color: labelColor, font: { size: 11 }, boxWidth: 12 }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              if (ctx.datasetIndex === 0) return ' ' + ctx.parsed.y.toLocaleString() + ' сом';
+              return ' ' + ctx.parsed.y + ' бронирований';
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          ticks: { color: labelColor, font: { size: 10 }, maxRotation: 45 },
+          grid:  { color: gridColor }
+        },
+        y: {
+          position: 'left',
+          ticks: { color: labelColor, font: { size: 10 },
+                   callback: function(v){ return v.toLocaleString(); } },
+          grid: { color: gridColor },
+          title: { display: true, text: 'Сом', color: labelColor, font: { size: 10 } }
+        },
+        y2: {
+          position: 'right',
+          ticks: { color: '#22c55e', font: { size: 10 }, stepSize: 1 },
+          grid: { drawOnChartArea: false },
+          title: { display: true, text: 'Броней', color: '#22c55e', font: { size: 10 } }
+        }
+      }
+    }
+  });
+})();
+</script>
 {% endblock %}

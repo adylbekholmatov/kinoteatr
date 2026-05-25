@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if lang == 'ky' %}Билет кайтаруу{% else %}Возврат билетов{% endif %} — Байэл Cinema{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="page-title">
+      <i class="fas fa-undo text-danger me-3"></i>
+      {% if lang == 'ky' %}Билет кайтаруу шарттары{% else %}Условия возврата билетов{% endif %}
+    </h1>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+
+      <div class="aki-card p-4 p-md-5">
+
+        {% if lang == 'ky' %}
+        <!-- KY -->
+        <h4 class="mb-4" style="color:var(--red);">Кайтаруу эрежелери</h4>
+
+        <div class="mb-4">
+          <h6 style="color:var(--text-bright);"><i class="fas fa-check-circle text-success me-2"></i>Кайтаруу мүмкүн болгон учурлар</h6>
+          <ul style="color:var(--muted); line-height:2;">
+            <li>Сеанс башталганга <strong style="color:var(--text-bright);">1 сааттан</strong> кем эмес убакыт калганда</li>
+            <li>Билет «Оплачено» же «Зарезервировано» статусунда болгондо</li>
+            <li>Билет сатып алган аккаунт аркылуу арыз берилгенде</li>
+          </ul>
+        </div>
+
+        <div class="mb-4">
+          <h6 style="color:var(--text-bright);"><i class="fas fa-times-circle text-danger me-2"></i>Кайтаруу мүмкүн эмес учурлар</h6>
+          <ul style="color:var(--muted); line-height:2;">
+            <li>Сеанс башталып кеткенде же бүткөндө</li>
+            <li>Сеанска 1 сааттан аз убакыт калганда</li>
+            <li>Промо-баа же атайын акция боюнча сатылган билеттер</li>
+          </ul>
+        </div>
+
+        <div class="mb-4">
+          <h6 style="color:var(--text-bright);"><i class="fas fa-clock text-warning me-2"></i>Акча кайтаруу мөөнөтү</h6>
+          <p style="color:var(--muted);">Жокко чыгаргандан кийин акча <strong style="color:var(--text-bright);">3–5 жумуш күндүн</strong> ичинде карта же электрондук капчыкка кайтарылат.</p>
+        </div>
+
+        <div class="mb-5">
+          <h6 style="color:var(--text-bright);"><i class="fas fa-phone text-danger me-2"></i>Байланыш</h6>
+          <p style="color:var(--muted);">Кандайдыр бир суроолоруңуз болсо, биз менен байланышыңыз:</p>
+          <ul style="color:var(--muted); line-height:2;">
+            <li><i class="fas fa-phone text-danger me-1"></i> <a href="tel:+996553950795">+996 553 950 795</a></li>
+            <li><i class="fas fa-envelope text-danger me-1"></i> <a href="mailto:info@bayelcinema.kg">info@bayelcinema.kg</a></li>
+          </ul>
+        </div>
+
+        {% else %}
+        <!-- RU -->
+        <h4 class="mb-4" style="color:var(--red);">Правила возврата</h4>
+
+        <div class="mb-4">
+          <h6 style="color:var(--text-bright);"><i class="fas fa-check-circle text-success me-2"></i>Когда возврат возможен</h6>
+          <ul style="color:var(--muted); line-height:2;">
+            <li>Если до начала сеанса осталось не менее <strong style="color:var(--text-bright);">1 часа</strong></li>
+            <li>Если билет имеет статус «Оплачено» или «Зарезервировано»</li>
+            <li>Заявка подана через личный кабинет того же аккаунта</li>
+          </ul>
+        </div>
+
+        <div class="mb-4">
+          <h6 style="color:var(--text-bright);"><i class="fas fa-times-circle text-danger me-2"></i>Когда возврат невозможен</h6>
+          <ul style="color:var(--muted); line-height:2;">
+            <li>Сеанс уже начался или завершился</li>
+            <li>До начала сеанса осталось менее 1 часа</li>
+            <li>Билеты, приобретённые по акционной или промо-цене</li>
+          </ul>
+        </div>
+
+        <div class="mb-4">
+          <h6 style="color:var(--text-bright);"><i class="fas fa-clock text-warning me-2"></i>Сроки возврата средств</h6>
+          <p style="color:var(--muted);">После отмены деньги возвращаются на карту или электронный кошелёк в течение <strong style="color:var(--text-bright);">3–5 рабочих дней</strong>.</p>
+        </div>
+
+        <div class="mb-5">
+          <h6 style="color:var(--text-bright);"><i class="fas fa-phone text-danger me-2"></i>Связь с нами</h6>
+          <p style="color:var(--muted);">Если у вас остались вопросы — свяжитесь с нами:</p>
+          <ul style="color:var(--muted); line-height:2;">
+            <li><i class="fas fa-phone text-danger me-1"></i> <a href="tel:+996553950795">+996 553 950 795</a></li>
+            <li><i class="fas fa-envelope text-danger me-1"></i> <a href="mailto:info@bayelcinema.kg">info@bayelcinema.kg</a></li>
+          </ul>
+        </div>
+        {% endif %}
+
+        <div class="d-flex gap-3 flex-wrap">
+          {% if user.is_authenticated %}
+          <a href="{% url 'my_bookings' %}" class="btn btn-danger">
+            <i class="fas fa-ticket-alt me-2"></i>
+            {% if lang == 'ky' %}Билеттерим{% else %}Мои билеты{% endif %}
+          </a>
+          {% endif %}
+          <a href="{% url 'contacts' %}" class="btn btn-outline-secondary">
+            <i class="fas fa-phone me-2"></i>
+            {% if lang == 'ky' %}Байланыш{% else %}Контакты{% endif %}
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

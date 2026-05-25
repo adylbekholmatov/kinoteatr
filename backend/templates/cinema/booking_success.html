@@ -1,7 +1,7 @@
-{% extends 'base.html' %}
+﻿{% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{% if lang == 'ky' %}Ийгиликтүү!{% else %}Бронирование успешно!{% endif %} — AKI Cinema{% endblock %}
+{% block title %}{% if lang == 'ky' %}Ийгиликтүү!{% else %}Бронирование успешно!{% endif %} — Байэл Cinema{% endblock %}
 
 {% block content %}
 <div class="container py-5">
@@ -26,7 +26,7 @@
         <div class="ticket-card mx-auto">
           <div class="ticket-header">
             <div class="aki-brand">
-              <span class="brand-aki">AKI</span><span class="brand-cinema">CINEMA</span>
+              <span class="brand-aki">Байэл</span><span class="brand-cinema">CINEMA</span>
             </div>
             <div class="ticket-code">{{ booking.booking_code }}</div>
           </div>

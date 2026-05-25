@@ -26,4 +26,7 @@ urlpatterns = [
     path('halls/add/', panel_views.panel_hall_add, name='panel_hall_add'),
     path('halls/<int:pk>/edit/', panel_views.panel_hall_edit, name='panel_hall_edit'),
     path('halls/<int:pk>/delete/', panel_views.panel_hall_delete, name='panel_hall_delete'),
+
+    # Профиль / Безопасность
+    path('change-password/', panel_views.panel_change_password, name='panel_change_password'),
 ]

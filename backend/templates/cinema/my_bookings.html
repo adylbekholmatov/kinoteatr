@@ -1,7 +1,147 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{% if lang == 'ky' %}Билеттерим{% else %}Мои билеты{% endif %} — AKI Cinema{% endblock %}
+{% block title %}{% if lang == 'ky' %}Билеттерим{% else %}Мои билеты{% endif %} — Байэл Cinema{% endblock %}
+
+{% block extra_css %}
+<style>
+/* ── Booking cards ── */
+.booking-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  transition: box-shadow .2s, transform .2s;
+  height: 100%;
+  display: flex; flex-direction: column;
+}
+.booking-card:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(0,0,0,.18); }
+.booking-card.cancelled { opacity: .6; }
+
+.booking-card-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(200,16,46,.05);
+}
+.booking-code {
+  font-family: 'Oswald', monospace;
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--red);
+  letter-spacing: .5px;
+}
+.booking-status {
+  font-size: .72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .6px;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.status-paid     { background: rgba(34,197,94,.15); color: #22c55e; }
+.status-reserved { background: rgba(59,130,246,.15); color: #3b82f6; }
+.status-pending  { background: rgba(234,179,8,.15);  color: #eab308; }
+.status-cancelled{ background: rgba(239,68,68,.12);  color: #ef4444; }
+
+.booking-card-body {
+  display: flex; gap: 14px;
+  padding: 16px 18px;
+  flex: 1;
+}
+.booking-poster {
+  width: 60px; height: 85px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.booking-movie {
+  font-weight: 700;
+  font-size: .95rem;
+  color: var(--text-bright);
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+.booking-meta {
+  font-size: .8rem;
+  color: var(--muted);
+  margin-bottom: 3px;
+}
+.seat-badge-sm {
+  display: inline-block;
+  background: rgba(200,16,46,.1);
+  color: var(--red);
+  font-size: .72rem;
+  font-weight: 600;
+  padding: 2px 7px;
+  border-radius: 6px;
+  margin: 2px 2px 0 0;
+}
+
+.booking-card-footer {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 12px 18px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Cancel button ── */
+.booking-card-cancel {
+  padding: 0 18px 14px;
+}
+.btn-cancel-booking {
+  width: 100%;
+  padding: 8px;
+  background: transparent;
+  border: 1px solid rgba(239,68,68,.35);
+  border-radius: 8px;
+  color: #ef4444;
+  font-size: .8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, border-color .2s;
+}
+.btn-cancel-booking:hover {
+  background: rgba(239,68,68,.1);
+  border-color: #ef4444;
+}
+
+/* ── Modal ── */
+.cancel-modal-backdrop {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.65);
+  z-index: 9000;
+  align-items: center; justify-content: center;
+}
+.cancel-modal-backdrop.show { display: flex; }
+.cancel-modal {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 28px;
+  max-width: 380px; width: 90%;
+  text-align: center;
+  box-shadow: 0 24px 60px rgba(0,0,0,.4);
+}
+.cancel-modal h5 { color: var(--text-bright); font-weight: 700; margin-bottom: 10px; }
+.cancel-modal p  { color: var(--muted); font-size: .88rem; margin-bottom: 24px; }
+.cancel-modal-btns { display: flex; gap: 12px; }
+.cancel-modal-btns .btn { flex: 1; }
+
+/* ── Refund note ── */
+.refund-note {
+  background: rgba(234,179,8,.08);
+  border: 1px solid rgba(234,179,8,.25);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: .82rem;
+  color: var(--muted);
+  margin-bottom: 32px;
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.refund-note i { color: #eab308; flex-shrink: 0; margin-top: 2px; }
+</style>
+{% endblock %}
 
 {% block content %}
 <div class="page-header">
@@ -14,6 +154,21 @@
 </div>
 
 <div class="container py-5">
+
+  <!-- Refund policy note -->
+  <div class="refund-note">
+    <i class="fas fa-info-circle"></i>
+    <span>
+      {% if lang == 'ky' %}
+        Сеанс башталганга чейин билетти жокко чыгарууга болот. Акча 3–5 жумуш күндүн ичинде кайтарылат.
+        <a href="{% url 'refund_policy' %}" class="text-warning">Кайтаруу шарттары →</a>
+      {% else %}
+        Вы можете отменить билет до начала сеанса. Деньги вернутся в течение 3–5 рабочих дней.
+        <a href="{% url 'refund_policy' %}" class="text-warning">Условия возврата →</a>
+      {% endif %}
+    </span>
+  </div>
+
   {% if bookings %}
   <div class="row g-4">
     {% for booking in bookings %}
@@ -60,6 +215,20 @@
           <span class="text-danger fw-bold">{{ booking.total_amount }} сом</span>
           <span class="text-muted small">{{ booking.created_at|date:"d.m.Y" }}</span>
         </div>
+
+        {# Cancel button: show only for active bookings where screening hasn't started #}
+        {% if booking.status != 'cancelled' and booking.screening.start_time > now %}
+        <div class="booking-card-cancel">
+          <button type="button"
+                  class="btn-cancel-booking"
+                  data-url="{% url 'cancel_booking' booking.booking_code %}"
+                  data-code="{{ booking.booking_code }}"
+                  data-lang="{{ lang }}">
+            <i class="fas fa-times-circle me-1"></i>
+            {% if lang == 'ky' %}Жокко чыгаруу{% else %}Отменить{% endif %}
+          </button>
+        </div>
+        {% endif %}
       </div>
     </div>
     {% endfor %}
@@ -74,4 +243,64 @@
   </div>
   {% endif %}
 </div>
+
+<!-- Cancel confirmation modal -->
+<div class="cancel-modal-backdrop" id="cancelBackdrop">
+  <div class="cancel-modal">
+    <i class="fas fa-exclamation-triangle fa-2x text-warning mb-3"></i>
+    <h5 id="cancelModalTitle">Отменить бронирование?</h5>
+    <p id="cancelModalText">Деньги вернутся в течение 3–5 рабочих дней. Это действие нельзя отменить.</p>
+    <div class="cancel-modal-btns">
+      <button type="button" class="btn btn-outline-secondary" id="cancelModalNo">
+        {% if lang == 'ky' %}Жок{% else %}Нет{% endif %}
+      </button>
+      <form id="cancelForm" method="post" action="">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger w-100">
+          <i class="fas fa-times me-1"></i>
+          {% if lang == 'ky' %}Ооба, жокко чыгар{% else %}Да, отменить{% endif %}
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+(function () {
+  var LANG = "{{ lang }}";
+
+  var backdrop  = document.getElementById('cancelBackdrop');
+  var modalTitle= document.getElementById('cancelModalTitle');
+  var modalText = document.getElementById('cancelModalText');
+  var cancelForm= document.getElementById('cancelForm');
+  var noBtn     = document.getElementById('cancelModalNo');
+
+  document.querySelectorAll('.btn-cancel-booking').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var url  = this.getAttribute('data-url');
+      var code = this.getAttribute('data-code');
+
+      modalTitle.textContent = LANG === 'ky'
+        ? code + ' — жокко чыгаруу?'
+        : 'Отменить бронирование ' + code + '?';
+      modalText.textContent = LANG === 'ky'
+        ? 'Акча 3–5 жумуш күндүн ичинде кайтарылат. Бул аракетти жокко чыгаруу мүмкүн эмес.'
+        : 'Деньги вернутся в течение 3–5 рабочих дней. Это действие нельзя отменить.';
+
+      cancelForm.setAttribute('action', url);
+      backdrop.classList.add('show');
+    });
+  });
+
+  noBtn.addEventListener('click', function () {
+    backdrop.classList.remove('show');
+  });
+
+  backdrop.addEventListener('click', function (e) {
+    if (e.target === backdrop) backdrop.classList.remove('show');
+  });
+})();
+</script>
 {% endblock %}

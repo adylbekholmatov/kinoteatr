@@ -131,7 +131,7 @@ class Screening(models.Model):
 
 
 def generate_booking_code():
-    return 'AKI-' + ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+    return 'BAYEL-' + ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
 
 
 class Booking(models.Model):

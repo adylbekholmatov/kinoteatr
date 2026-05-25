@@ -1,4 +1,4 @@
-import json
+﻿import json
 import logging
 from datetime import date, timedelta
 from decimal import Decimal
@@ -271,15 +271,15 @@ def payment(request):
     # Remove checkout data from session immediately so page refresh won't duplicate
     del request.session['checkout_data']
 
-    # Initiate Paybox payment
-    from cinema.paybox import create_payment
-    site_url = getattr(settings, 'PAYBOX_SITE_URL', '').rstrip('/')
+    # Initiate Freedom Pay payment
+    from cinema.freedom_pay import create_payment
+    site_url = getattr(settings, 'FREEDOM_PAY_SITE_URL', '').rstrip('/')
 
     try:
         payment_id, redirect_url = create_payment(
             order_id    = booking.booking_code,
             amount      = total,
-            description = f'AKI Cinema — {screening.movie.title_ru} ({screening.start_time.strftime("%d.%m.%Y %H:%M")})',
+            description = f'Байэл Cinema —{screening.movie.title_ru} ({screening.start_time.strftime("%d.%m.%Y %H:%M")})',
             success_url = f'{site_url}/payment/success/',
             fail_url    = f'{site_url}/payment/fail/',
             result_url  = f'{site_url}/payment/callback/',
@@ -291,8 +291,8 @@ def payment(request):
         return redirect(redirect_url)
 
     except Exception as exc:
-        logger.error('Paybox create_payment error: %s', exc)
-        # Cancel the booking if Paybox is unavailable
+        logger.error('Freedom Pay create_payment error: %s', exc)
+        # Cancel the booking if Freedom Pay is unavailable
         booking.status = 'cancelled'
         booking.save(update_fields=['status'])
         messages.error(
@@ -312,7 +312,7 @@ def paybox_callback(request):
     Paybox calls this URL server-to-server after payment attempt.
     Must respond with XML: pg_status = ok | rejected | error.
     """
-    from cinema.paybox import verify_callback, callback_xml
+    from cinema.freedom_pay import verify_callback, callback_xml
 
     # Flatten QueryDict lists → plain dict
     data = {k: v[0] if isinstance(v, list) else v for k, v in request.POST.items()}
@@ -451,11 +451,53 @@ def logout_view(request):
 
 @login_required
 def my_bookings(request):
+    from django.utils import timezone as tz
     lang = get_lang(request)
     bookings = Booking.objects.filter(
         user=request.user
     ).select_related('screening__movie', 'screening__hall').prefetch_related('booked_seats__seat').order_by('-created_at')
-    return render(request, 'cinema/my_bookings.html', {'bookings': bookings, 'lang': lang})
+    return render(request, 'cinema/my_bookings.html', {'bookings': bookings, 'lang': lang, 'now': tz.now()})
+
+
+@login_required
+@require_POST
+def cancel_booking(request, code):
+    """User cancels their own booking (only before screening starts)."""
+    lang = get_lang(request)
+    booking = get_object_or_404(Booking, booking_code=code, user=request.user)
+
+    # Allow cancellation only if screening hasn't started yet
+    from django.utils import timezone as tz
+    if booking.screening.start_time <= tz.now():
+        messages.error(
+            request,
+            'Сеанс башталып кетти — кайтаруу мүмкүн эмес.' if lang == 'ky'
+            else 'Сеанс уже начался — отмена невозможна.'
+        )
+        return redirect('my_bookings')
+
+    if booking.status not in ('paid', 'reserved', 'pending'):
+        messages.error(
+            request,
+            'Бул буйрутманы жокко чыгаруу мүмкүн эмес.' if lang == 'ky'
+            else 'Эту бронь нельзя отменить.'
+        )
+        return redirect('my_bookings')
+
+    booking.status = 'cancelled'
+    booking.save(update_fields=['status'])
+
+    messages.success(
+        request,
+        'Буйрутма жокко чыгарылды. Акча 3–5 жумуш күндүн ичинде кайтарылат.' if lang == 'ky'
+        else 'Бронирование отменено. Деньги вернутся в течение 3–5 рабочих дней.'
+    )
+    return redirect('my_bookings')
+
+
+def refund_policy(request):
+    """Refund / return policy page."""
+    return render(request, 'cinema/refund_policy.html', {'lang': get_lang(request)})
 
 
 # ── О НАС / КОНТАКТЫ ──────────────────────────────────────────────────────────

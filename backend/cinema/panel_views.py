@@ -1,9 +1,13 @@
-from datetime import date
+import json
+from datetime import date, timedelta
 
 from django.contrib import messages
+from django.contrib.auth import update_session_auth_hash
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import PasswordChangeForm
 from django.core.paginator import Paginator
-from django.db.models import Q, Sum
+from django.db.models import Q, Sum, Count
+from django.db.models.functions import TruncDate
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
@@ -27,7 +31,9 @@ def panel_dashboard(request):
         return guard
 
     today = date.today()
+    month_start = today.replace(day=1)
 
+    # ── Today ──
     movie_count = Movie.objects.count()
     screening_count_today = Screening.objects.filter(start_time__date=today).count()
     bookings_today = Booking.objects.filter(created_at__date=today)
@@ -35,6 +41,36 @@ def panel_dashboard(request):
     revenue_today = bookings_today.filter(status='paid').aggregate(
         total=Sum('total_amount')
     )['total'] or 0
+
+    # ── This month ──
+    bookings_month = Booking.objects.filter(created_at__date__gte=month_start)
+    bookings_month_count = bookings_month.count()
+    revenue_month = bookings_month.filter(status='paid').aggregate(
+        total=Sum('total_amount')
+    )['total'] or 0
+
+    # ── Chart: daily revenue for current month (last 30 days max) ──
+    daily_qs = (
+        Booking.objects
+        .filter(status='paid', created_at__date__gte=month_start)
+        .annotate(day=TruncDate('created_at'))
+        .values('day')
+        .annotate(total=Sum('total_amount'), cnt=Count('id'))
+        .order_by('day')
+    )
+
+    # Build full day-by-day series from month_start to today
+    chart_labels = []
+    chart_revenue = []
+    chart_bookings = []
+    daily_map = {row['day']: row for row in daily_qs}
+    d = month_start
+    while d <= today:
+        chart_labels.append(d.strftime('%d.%m'))
+        row = daily_map.get(d)
+        chart_revenue.append(float(row['total']) if row else 0)
+        chart_bookings.append(row['cnt'] if row else 0)
+        d += timedelta(days=1)
 
     recent_bookings = Booking.objects.select_related(
         'screening__movie'
@@ -46,6 +82,15 @@ def panel_dashboard(request):
         'screening_count_today': screening_count_today,
         'bookings_today_count': bookings_today_count,
         'revenue_today': revenue_today,
+        # month
+        'bookings_month_count': bookings_month_count,
+        'revenue_month': revenue_month,
+        'month_label': today.strftime('%B %Y'),
+        # chart
+        'chart_labels': json.dumps(chart_labels, ensure_ascii=False),
+        'chart_revenue': json.dumps(chart_revenue),
+        'chart_bookings': json.dumps(chart_bookings),
+        # table
         'recent_bookings': recent_bookings,
     })
 
@@ -406,3 +451,30 @@ def panel_hall_delete(request, pk):
         hall.delete()
         messages.success(request, f'Зал «{name}» удалён.')
     return redirect('panel_halls')
+
+
+# ── СМЕНА ПАРОЛЯ ─────────────────────────────────────────────────────────────
+
+@login_required
+def panel_change_password(request):
+    guard = _staff_required(request)
+    if guard:
+        return guard
+
+    if request.method == 'POST':
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+        if form.is_valid():
+            user = form.save()
+            # Обновляем сессию чтобы не вылетело после смены пароля
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Пароль успешно изменён!')
+            return redirect('panel_change_password')
+        else:
+            messages.error(request, 'Пожалуйста, исправьте ошибки.')
+    else:
+        form = PasswordChangeForm(user=request.user)
+
+    return render(request, 'panel/change_password.html', {
+        'page_title': 'Смена пароля',
+        'form': form,
+    })

@@ -1,10 +1,10 @@
-{% load static i18n %}
+﻿{% load static i18n %}
 <!DOCTYPE html>
 <html lang="{{ current_lang }}">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{% block title %}AKI Cinema{% endblock %}</title>
+  <title>{% block title %}Байэл Cinema{% endblock %}</title>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -18,7 +18,7 @@
 <nav class="navbar navbar-expand-lg navbar-dark aki-navbar sticky-top">
   <div class="container">
     <a class="navbar-brand aki-brand" href="{% url 'index' %}">
-      <span class="brand-aki">AKI</span><span class="brand-cinema">CINEMA</span>
+      <span class="brand-aki">Байэл</span><span class="brand-cinema">CINEMA</span>
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
       <span class="navbar-toggler-icon"></span>
@@ -133,7 +133,7 @@
     <div class="row gy-4">
       <div class="col-lg-4">
         <div class="aki-brand mb-3">
-          <span class="brand-aki">AKI</span><span class="brand-cinema">CINEMA</span>
+          <span class="brand-aki">Байэл</span><span class="brand-cinema">CINEMA</span>
         </div>
         <p class="text-muted small">
           {% if current_lang == 'ky' %}
@@ -143,10 +143,7 @@
           {% endif %}
         </p>
         <div class="social-links mt-3">
-          <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
-          <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
-          <a href="#" class="social-link"><i class="fab fa-telegram"></i></a>
-          <a href="#" class="social-link"><i class="fab fa-youtube"></i></a>
+          <a href="https://www.instagram.com/kinoteatr_bayel?utm_source=qr" class="social-link" target="_blank" rel="noopener"><i class="fab fa-instagram"></i></a>
         </div>
       </div>
       <div class="col-lg-2 col-sm-6">
@@ -165,7 +162,7 @@
           {% if current_lang == 'ky' %}Маалымат{% else %}Информация{% endif %}
         </h6>
         <ul class="footer-links">
-          <li><a href="#">{% if current_lang == 'ky' %}Билет кайтаруу{% else %}Возврат билетов{% endif %}</a></li>
+          <li><a href="{% url 'refund_policy' %}">{% if current_lang == 'ky' %}Билет кайтаруу{% else %}Возврат билетов{% endif %}</a></li>
           <li><a href="#">{% if current_lang == 'ky' %}Конфиденциалдуулук{% else %}Политика конфиденциальности{% endif %}</a></li>
           <li><a href="#">FAQ</a></li>
         </ul>
@@ -175,9 +172,9 @@
           {% if current_lang == 'ky' %}Байланыш{% else %}Контакты{% endif %}
         </h6>
         <ul class="footer-contacts">
-          <li><i class="fas fa-map-marker-alt text-danger me-2"></i>г. Бишкек, ул. Киевская, 114</li>
-          <li><i class="fas fa-phone text-danger me-2"></i>+996 312 123 456</li>
-          <li><i class="fas fa-envelope text-danger me-2"></i>info@akicinema.kg</li>
+          <li><i class="fas fa-map-marker-alt text-danger me-2"></i>г. Кызыл-Кия, ул. Жусубалиева 124а</li>
+          <li><i class="fas fa-phone text-danger me-2"></i>+996 553 950 795</li>
+          <li><i class="fas fa-envelope text-danger me-2"></i>info@bayelcinema.kg</li>
           <li><i class="fas fa-clock text-danger me-2"></i>
             {% if current_lang == 'ky' %}Күн сайын 09:00 – 00:00{% else %}Ежедневно 09:00 – 00:00{% endif %}
           </li>
@@ -186,7 +183,7 @@
     </div>
     <hr class="footer-divider" />
     <div class="footer-bottom">
-      <p>&copy; 2026 AKI Cinema. {% if current_lang == 'ky' %}Бардык укуктар корголгон.{% else %}Все права защищены.{% endif %}</p>
+      <p>&copy; 2026 Байэл Cinema. {% if current_lang == 'ky' %}Бардык укуктар корголгон.{% else %}Все права защищены.{% endif %}</p>
     </div>
   </div>
 </footer>

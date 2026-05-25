@@ -1,4 +1,4 @@
-from pathlib import Path
+﻿from pathlib import Path
 from dotenv import load_dotenv
 import os
 
@@ -95,13 +95,14 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# ── Paybox.money ──────────────────────────────────────────────────────────────
-PAYBOX_MERCHANT_ID  = os.getenv('PAYBOX_MERCHANT_ID', '')
-PAYBOX_SECRET_KEY   = os.getenv('PAYBOX_SECRET_KEY', '')
-# Public URL of your site (used for success/fail/callback URLs sent to Paybox).
-# In development set this to your ngrok URL, e.g. https://abc123.ngrok-free.app
-PAYBOX_SITE_URL     = os.getenv('PAYBOX_SITE_URL', 'http://127.0.0.1:8000')
-PAYBOX_TESTING_MODE = os.getenv('PAYBOX_TESTING_MODE', 'True') == 'True'
+# ── Freedom Pay (freedompay.money) ────────────────────────────────────────────
+FREEDOM_PAY_MERCHANT_ID  = os.getenv('FREEDOM_PAY_MERCHANT_ID', '')
+FREEDOM_PAY_SECRET_KEY   = os.getenv('FREEDOM_PAY_SECRET_KEY', '')
+# Публичный URL вашего сайта (для success/fail/callback URL).
+# В разработке — ngrok URL: https://abc123.ngrok-free.app
+# На продакшне — ваш домен: https://akicinema.kg
+FREEDOM_PAY_SITE_URL     = os.getenv('FREEDOM_PAY_SITE_URL', 'http://127.0.0.1:8000')
+FREEDOM_PAY_TESTING_MODE = os.getenv('FREEDOM_PAY_TESTING_MODE', 'True') == 'True'
 # ─────────────────────────────────────────────────────────────────────────────
 
 LOGIN_URL = '/auth/login/'
@@ -129,12 +130,12 @@ CORS_ALLOWED_ORIGINS = [
 CORS_ALLOW_ALL_ORIGINS = DEBUG
 
 JAZZMIN_SETTINGS = {
-    'site_title': 'AKI Cinema Admin',
-    'site_header': 'AKI Cinema',
-    'site_brand': 'AKI Cinema',
+    'site_title': 'Байэл Cinema Admin',
+    'site_header': 'Байэл Cinema',
+    'site_brand': 'Байэл Cinema',
     'site_logo': None,
-    'welcome_sign': 'Добро пожаловать в панель управления AKI Cinema',
-    'copyright': 'AKI Cinema',
+    'welcome_sign': 'Добро пожаловать в панель управления Байэл Cinema',
+    'copyright': 'Байэл Cinema',
     'show_sidebar': True,
     'navigation_expanded': True,
     'icons': {
