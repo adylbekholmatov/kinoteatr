@@ -3,6 +3,13 @@
 
 {% block title %}{% if lang == 'ky' %}{{ movie.title_ky }}{% else %}{{ movie.title_ru }}{% endif %} — Байэл Cinema{% endblock %}
 
+{% block meta_description %}{% if lang == 'ky' %}{{ movie.description_ky|truncatechars:160 }}{% else %}{{ movie.description_ru|truncatechars:160 }}{% endif %}{% endblock %}
+{% block meta_keywords %}{{ movie.title_ru }}, кино Кызыл-Кия, Байэл Cinema, билеты {{ movie.title_ru }}{% endblock %}
+
+{% block og_title %}{% if lang == 'ky' %}{{ movie.title_ky }}{% else %}{{ movie.title_ru }}{% endif %} — Байэл Cinema{% endblock %}
+{% block og_description %}{% if lang == 'ky' %}{{ movie.description_ky|truncatechars:200 }}{% else %}{{ movie.description_ru|truncatechars:200 }}{% endif %}{% endblock %}
+{% if movie.poster %}{% block og_image %}https://bayel-cinema.online{{ movie.poster.url }}{% endblock %}{% endif %}
+
 {% block content %}
 <!-- Hero backdrop -->
 <div class="movie-detail-hero">
@@ -28,7 +35,7 @@
           {% endfor %}
         </div>
         <h1 class="movie-detail-title">
-          {% if lang == 'ky' %}{{ movie.title_ky }}{% else %}{{ movie.title_ru }}{% endif %}
+          {% if lang == 'ky' %}{{ movie.title_ky|default:movie.title_ru }}{% else %}{{ movie.title_ru }}{% endif %}
         </h1>
         <div class="movie-detail-meta d-flex flex-wrap gap-4 mt-3">
           <div><i class="fas fa-clock text-danger me-2"></i>{{ movie.duration_display }}</div>
@@ -56,7 +63,7 @@
         {% if lang == 'ky' %}Сүрөттөмө{% else %}Описание{% endif %}
       </h3>
       <p class="movie-description">
-        {% if lang == 'ky' %}{{ movie.description_ky }}{% else %}{{ movie.description_ru }}{% endif %}
+        {% if lang == 'ky' %}{{ movie.description_ky|default:movie.description_ru }}{% else %}{{ movie.description_ru }}{% endif %}
       </p>
     </div>
 

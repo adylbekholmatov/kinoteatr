@@ -64,11 +64,20 @@
 
       <!-- Date/time + Price -->
       <div class="panel-card mb-3">
-        <div class="panel-card-header">
+        <div class="panel-card-header" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
           <span class="panel-card-title"><i class="fa-regular fa-clock" style="color:var(--red); margin-right:8px;"></i>Расписание и цена</span>
+          {% if not is_edit %}
+          <button type="button" id="addTimeBtn"
+                  style="display:flex; align-items:center; gap:6px; padding:6px 14px; border-radius:7px; border:1px solid var(--red); background:transparent; color:var(--red); font-size:12px; font-weight:600; cursor:pointer; transition:background .15s, color .15s;"
+                  onmouseover="this.style.background='var(--red)';this.style.color='#fff';"
+                  onmouseout="this.style.background='transparent';this.style.color='var(--red)';">
+            <i class="fa-solid fa-plus"></i> Добавить время
+          </button>
+          {% endif %}
         </div>
         <div class="panel-card-body" style="display:flex; flex-direction:column; gap:16px;">
 
+          <!-- First (main) time slot -->
           <div>
             <label class="form-label-panel">{{ form.start_time.label }} <span style="color:var(--red);">*</span></label>
             {{ form.start_time }}
@@ -79,6 +88,11 @@
             {% endif %}
             <div style="font-size:11px; color:var(--muted); margin-top:4px;">Дата и время начала сеанса</div>
           </div>
+
+          <!-- Extra time slots (create mode only) -->
+          {% if not is_edit %}
+          <div id="extraTimesContainer" style="display:flex; flex-direction:column; gap:10px;"></div>
+          {% endif %}
 
           <div>
             <label class="form-label-panel">{{ form.price.label }} <span style="color:var(--red);">*</span></label>
@@ -140,6 +154,31 @@
 
 {% block extra_js %}
 <script>
+  // ── Multi-time-slot logic (create mode only) ──
+  const addTimeBtn = document.getElementById('addTimeBtn');
+  const extraContainer = document.getElementById('extraTimesContainer');
+
+  if (addTimeBtn && extraContainer) {
+    addTimeBtn.addEventListener('click', function () {
+      const idx = extraContainer.children.length;
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex; align-items:center; gap:8px;';
+      row.innerHTML = `
+        <input type="datetime-local" name="extra_times"
+               style="flex:1; background:var(--bg3); border:1px solid var(--border); border-radius:8px; padding:10px 14px; color:var(--text); font-size:14px; outline:none; transition:border .2s;"
+               onfocus="this.style.borderColor='var(--red)'" onblur="this.style.borderColor='var(--border)'" />
+        <button type="button" title="Удалить"
+                style="flex-shrink:0; width:34px; height:34px; border-radius:7px; border:1px solid var(--border); background:transparent; color:var(--muted); cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; transition:border .15s, color .15s;"
+                onmouseover="this.style.borderColor='#ef4444';this.style.color='#ef4444';"
+                onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)';"
+                onclick="this.parentElement.remove();">
+          <i class="fa-solid fa-xmark"></i>
+        </button>`;
+      extraContainer.appendChild(row);
+      row.querySelector('input').focus();
+    });
+  }
+
   // Movie preview panel
   const movieSelect = document.getElementById('id_movie');
 

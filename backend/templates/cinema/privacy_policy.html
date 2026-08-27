@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{% if lang == 'ky' %}Купуялык саясаты{% else %}Политика конфиденциальности{% endif %} — Байэл Cinema{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="container">
+    <h1 class="page-title">
+      <i class="fas fa-shield-alt text-danger me-3"></i>
+      {% if lang == 'ky' %}Купуялык саясаты{% else %}Политика конфиденциальности{% endif %}
+    </h1>
+  </div>
+</div>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="aki-card p-4 p-md-5" style="color:var(--muted); line-height:1.8;">
+
+        {% if lang == 'ky' %}
+        <p style="color:var(--text-bright);">Акыркы жаңыртуу: 2026-жыл</p>
+
+        <h5 style="color:var(--text-bright); margin-top:28px;">1. Жалпы жоболор</h5>
+        <p>Байэл Cinema (мындан ары «Биз») сиздин жеке маалыматтарыңызды купуя сактайбыз. Бул саясат биздин сайтты колдонуу менен байланышкан маалыматтарды иштетүү тартибин сүрөттөйт.</p>
+
+        <h5 style="color:var(--text-bright); margin-top:28px;">2. Кандай маалымат чогулат</h5>
+        <ul>
+          <li>Логин жана сырсөз (шифрленген)</li>
+          <li>Аты-жөнү жана Email</li>
+          <li>Телефон номери</li>
+          <li>Билет сатып алуу тарыхы</li>
+        </ul>
+
+        <h5 style="color:var(--text-bright); margin-top:28px;">3. Маалыматтарды колдонуу</h5>
+        <p>Маалыматтар төмөнкү максаттарда гана колдонулат:</p>
+        <ul>
+          <li>Билет броно кылуу жана тастыктоо</li>
+          <li>Колдонуучу аккаунтун башкаруу</li>
+          <li>Кызматтарды жакшыртуу</li>
+        </ul>
+
+        <h5 style="color:var(--text-bright); margin-top:28px;">4. Маалыматтарды сактоо</h5>
+        <p>Жеке маалыматтар үчүнчү тараптарга берилбейт. Бардык маалыматтар коопсуз серверде сакталат.</p>
+
+        <h5 style="color:var(--text-bright); margin-top:28px;">5. Байланыш</h5>
+        <p>Суроолор боюнча: <a href="mailto:info@bayelcinema.kg" class="text-danger">info@bayelcinema.kg</a></p>
+
+        {% else %}
+        <p style="color:var(--text-bright);">Последнее обновление: 2026 год</p>
+
+        <h5 style="color:var(--text-bright); margin-top:28px;">1. Общие положения</h5>
+        <p>Байэл Cinema (далее — «Мы») уважает конфиденциальность пользователей. Настоящая политика описывает порядок обработки персональных данных при использовании сайта bayel-cinema.online.</p>
+
+        <h5 style="color:var(--text-bright); margin-top:28px;">2. Какие данные собираются</h5>
+        <ul>
+          <li>Логин и пароль (в зашифрованном виде)</li>
+          <li>Имя и адрес электронной почты</li>
+          <li>Номер телефона</li>
+          <li>История покупки билетов</li>
+        </ul>
+
+        <h5 style="color:var(--text-bright); margin-top:28px;">3. Использование данных</h5>
+        <p>Данные используются исключительно для:</p>
+        <ul>
+          <li>Оформления и подтверждения бронирования билетов</li>
+          <li>Управления пользовательским аккаунтом</li>
+          <li>Улучшения качества сервиса</li>
+        </ul>
+
+        <h5 style="color:var(--text-bright); margin-top:28px;">4. Хранение и защита данных</h5>
+        <p>Персональные данные не передаются третьим лицам. Все данные хранятся на защищённом сервере с использованием шифрования.</p>
+
+        <h5 style="color:var(--text-bright); margin-top:28px;">5. Права пользователя</h5>
+        <p>Вы вправе запросить удаление своих данных, написав на <a href="mailto:info@bayelcinema.kg" class="text-danger">info@bayelcinema.kg</a>.</p>
+
+        <h5 style="color:var(--text-bright); margin-top:28px;">6. Контакты</h5>
+        <p>По вопросам: <a href="mailto:info@bayelcinema.kg" class="text-danger">info@bayelcinema.kg</a><br>
+        Тел: <a href="tel:+996553950795" class="text-danger">+996 553 950 795</a></p>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

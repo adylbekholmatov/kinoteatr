@@ -218,12 +218,46 @@ def panel_screening_add(request):
     if request.method == 'POST':
         form = ScreeningForm(request.POST)
         if form.is_valid():
-            screening = form.save()
-            messages.success(
-                request,
-                f'Сеанс «{screening.movie.title_ru}» на '
-                f'{screening.start_time.strftime("%d.%m.%Y %H:%M")} добавлен.'
-            )
+            first = form.save()
+            created = [first]
+
+            # Extra time slots submitted alongside the main form
+            extra_raw = request.POST.getlist('extra_times')
+            for raw in extra_raw:
+                raw = raw.strip()
+                if not raw:
+                    continue
+                try:
+                    from datetime import datetime as _dt
+                    naive = _dt.strptime(raw, '%Y-%m-%dT%H:%M')
+                    from django.utils import timezone as _tz
+                    aware = _tz.make_aware(naive)
+                    Screening.objects.create(
+                        movie=first.movie,
+                        hall=first.hall,
+                        start_time=aware,
+                        price=first.price,
+                        is_active=first.is_active,
+                    )
+                    created.append(aware)
+                except (ValueError, TypeError):
+                    pass
+
+            if len(created) == 1:
+                messages.success(
+                    request,
+                    f'Сеанс «{first.movie.title_ru}» на '
+                    f'{first.start_time.strftime("%d.%m.%Y %H:%M")} добавлен.'
+                )
+            else:
+                times_str = ', '.join(
+                    t.strftime('%H:%M') if hasattr(t, 'strftime') else ''
+                    for t in created
+                )
+                messages.success(
+                    request,
+                    f'Создано {len(created)} сеансов для «{first.movie.title_ru}»: {times_str}.'
+                )
             return redirect('panel_screenings')
         else:
             messages.error(request, 'Пожалуйста, исправьте ошибки в форме.')

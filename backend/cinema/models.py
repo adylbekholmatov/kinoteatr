@@ -23,8 +23,8 @@ class Movie(models.Model):
 
     title_ru = models.CharField('Название (рус)', max_length=200)
     title_ky = models.CharField('Название (кырг)', max_length=200)
-    description_ru = models.TextField('Описание (рус)')
-    description_ky = models.TextField('Описание (кырг)')
+    description_ru = models.TextField('Описание (рус)', blank=True, default='')
+    description_ky = models.TextField('Описание (кырг)', blank=True, default='')
     poster = models.ImageField('Постер', upload_to='posters/')
     trailer_url = models.URLField('Трейлер (YouTube URL)', blank=True)
     duration = models.PositiveIntegerField('Длительность (мин)')

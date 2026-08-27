@@ -4,7 +4,78 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>{% block title %}Байэл Cinema{% endblock %}</title>
+
+  <!-- ── SEO: Title & Description ── -->
+  <title>{% block title %}Байэл Cinema — Кинотеатр в Кызыл-Кие{% endblock %}</title>
+  <meta name="description" content="{% block meta_description %}Байэл Cinema — лучший кинотеатр в Кызыл-Кие. Онлайн-покупка билетов, расписание сеансов, VIP-зал. Кыргызстан.{% endblock %}" />
+  <meta name="keywords" content="{% block meta_keywords %}кинотеатр Кызыл-Кия, Байэл Cinema, билеты в кино, расписание кино, Кыргызстан кино{% endblock %}" />
+  <meta name="author" content="Байэл Cinema" />
+  <meta name="robots" content="index, follow" />
+  <link rel="canonical" href="https://bayel-cinema.online{{ request.path }}" />
+  <link rel="icon"
+      type="image/png"
+      href="{% static 'img/favicon.png' %}?v=3" />
+
+  <link rel="shortcut icon"
+        href="{% static 'img/favicon.png' %}?v=3" />
+  
+  <meta name="google-site-verification" content="-04HRyFRPAmkak8KpkT23YBu9FwXis9nso0d0Qbp9AI" />
+  <meta name="yandex-verification" content="a4727a3078e7a7bd" />
+
+  <meta name="keywords" content="
+    bayel cinema,
+    bayel-cinema,
+    bayel cinema кызыл-кыя,
+    кинотеатр кызыл-кыя,
+    кино кызыл-кыя,
+    афиша кино кызыл-кыя,
+    сеансы кино кызыл-кыя,
+    кинотеатр,
+    купить билет кино кызыл-кыя,
+    онлайн билеты кинотеатр,
+    bayel cinema расписание,
+    bayel cinema афиша,
+    кинотеатр кыргызстан,
+    cinema kyzyl-kiya,
+    movie theater kyzyl-kiya,
+    bayel cinema kyrgyzstan,
+    кинотеатр баткенская область,
+    фильмы кызыл-кыя,
+    премьеры кино кыргызстан,
+    3d кинотеатр кызыл-кыя,
+    bayel cinema tickets
+  ">
+  <!-- ── Open Graph (Facebook, Telegram, WhatsApp) ── -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Байэл Cinema" />
+  <meta property="og:title" content="{% block og_title %}Байэл Cinema — Кинотеатр в Кызыл-Кие{% endblock %}" />
+  <meta property="og:description" content="{% block og_description %}Онлайн-покупка билетов, расписание сеансов, VIP-зал. Кызыл-Кия, Кыргызстан.{% endblock %}" />
+  <meta property="og:url" content="https://bayel-cinema.online{{ request.path }}" />
+  <meta property="og:image" content="{% block og_image %}https://bayel-cinema.online{% static 'img/og-cover.jpg' %}{% endblock %}" />
+  <meta property="og:locale" content="{% if current_lang == 'ky' %}ky_KG{% else %}ru_RU{% endif %}" />
+
+  <!-- ── Schema.org (Google) ── -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MovieTheater",
+    "name": "Байэл Cinema",
+    "url": "https://bayel-cinema.online",
+    "telephone": "+996553950795",
+    "email": "info@bayelcinema.kg",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "ул. Жусубалиева 124а",
+      "addressLocality": "Кызыл-Кия",
+      "addressCountry": "KG"
+    },
+    "openingHours": "Mo-Su 09:00-00:00",
+    "sameAs": [
+      "https://www.instagram.com/kinoteatr_bayel"
+    ]
+  }
+  </script>
+
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -163,7 +234,7 @@
         </h6>
         <ul class="footer-links">
           <li><a href="{% url 'refund_policy' %}">{% if current_lang == 'ky' %}Билет кайтаруу{% else %}Возврат билетов{% endif %}</a></li>
-          <li><a href="#">{% if current_lang == 'ky' %}Конфиденциалдуулук{% else %}Политика конфиденциальности{% endif %}</a></li>
+          <li><a href="{% url 'privacy_policy' %}">{% if current_lang == 'ky' %}Конфиденциалдуулук{% else %}Политика конфиденциальности{% endif %}</a></li>
           <li><a href="#">FAQ</a></li>
         </ul>
       </div>
@@ -184,6 +255,9 @@
     <hr class="footer-divider" />
     <div class="footer-bottom">
       <p>&copy; 2026 Байэл Cinema. {% if current_lang == 'ky' %}Бардык укуктар корголгон.{% else %}Все права защищены.{% endif %}</p>
+      <p class="text-muted small mt-1" style="opacity:.6; font-size:.72rem;">
+        ИП Кеңешбек уулу Марс &nbsp;·&nbsp; ИНН: 20705199300687 &nbsp;·&nbsp; ОКВЭД 59.11.0 — Производство кинофильмов, видео и телевизионных программ
+      </p>
     </div>
   </div>
 </footer>

@@ -20,8 +20,8 @@ class MovieForm(forms.ModelForm):
         widgets = {
             'title_ru': forms.TextInput(attrs={'class': FIELD_CLASS, 'placeholder': 'Название на русском'}),
             'title_ky': forms.TextInput(attrs={'class': FIELD_CLASS, 'placeholder': 'Аталышы кыргызча'}),
-            'description_ru': forms.Textarea(attrs={'class': FIELD_CLASS, 'rows': 5, 'placeholder': 'Описание на русском'}),
-            'description_ky': forms.Textarea(attrs={'class': FIELD_CLASS, 'rows': 5, 'placeholder': 'Сүрөттөмө кыргызча'}),
+            'description_ru': forms.Textarea(attrs={'class': FIELD_CLASS, 'rows': 5, 'placeholder': 'Описание на русском (необязательно)'}),
+            'description_ky': forms.Textarea(attrs={'class': FIELD_CLASS, 'rows': 5, 'placeholder': 'Сүрөттөмө кыргызча (милдеттүү эмес)'}),
             'poster': forms.ClearableFileInput(attrs={'class': 'form-control bg-dark text-light border-secondary'}),
             'trailer_url': forms.URLInput(attrs={'class': FIELD_CLASS, 'placeholder': 'https://youtube.com/watch?v=...'}),
             'duration': forms.NumberInput(attrs={'class': FIELD_CLASS, 'placeholder': 'Длительность в минутах'}),
@@ -33,6 +33,12 @@ class MovieForm(forms.ModelForm):
             'is_active': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'is_new': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['description_ru'].required = False
+        self.fields['description_ky'].required = False
+        self.fields['title_ky'].required = False
 
 
 class ScreeningForm(forms.ModelForm):

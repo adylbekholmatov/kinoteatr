@@ -23,4 +23,8 @@ urlpatterns = [
     path('ajax/screenings/<int:movie_id>/', views.screenings_by_movie, name='screenings_by_movie'),
     path('set-theme/', views.set_theme, name='set_theme'),
     path('set-language/', views.set_language_custom, name='set_language_custom'),
+    path('privacy-policy/', views.privacy_policy, name='privacy_policy'),
+    path('robots.txt', views.robots_txt, name='robots_txt'),
+    path('sitemap.xml', views.sitemap_xml, name='sitemap_xml'),
+    path('yandex_a4727a3078e7a7bd.html', views.yandex_verify, name='yandex_verify'),
 ]

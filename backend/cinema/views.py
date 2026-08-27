@@ -510,6 +510,24 @@ def contacts(request):
     return render(request, 'cinema/contacts.html', {'lang': get_lang(request)})
 
 
+# ── SEO ───────────────────────────────────────────────────────────────────────
+
+def privacy_policy(request):
+    return render(request, 'cinema/privacy_policy.html', {'lang': get_lang(request)})
+
+
+def robots_txt(request):
+    return render(request, 'robots.txt', content_type='text/plain')
+
+
+def sitemap_xml(request):
+    return render(request, 'sitemap.xml', content_type='application/xml')
+
+
+def yandex_verify(request):
+    return render(request, 'yandex_a4727a3078e7a7bd.html')
+
+
 # ── API для получения сеансов по фильму (AJAX) ────────────────────────────────
 
 def screenings_by_movie(request, movie_id):
