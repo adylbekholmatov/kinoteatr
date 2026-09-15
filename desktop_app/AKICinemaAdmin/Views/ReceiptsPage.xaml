@@ -1,0 +1,212 @@
+<Page x:Class="AKICinemaAdmin.Views.ReceiptsPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      Title="Чеки оплаты"
+      Background="{StaticResource BgBrush}">
+
+    <Page.Resources>
+        <!-- Column header cell -->
+        <Style x:Key="ColHead" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource MutedBrush}"/>
+            <Setter Property="FontSize" Value="10"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <!-- Compact action button -->
+        <Style x:Key="RowAction" TargetType="Button" BasedOn="{StaticResource BaseButtonStyle}">
+            <Setter Property="Height" Value="34"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Padding" Value="10,0"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+    </Page.Resources>
+
+    <Grid Margin="24,20,24,20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- ═══ TOOLBAR ═══ -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,18">
+            <TextBlock Text="🔔" FontSize="22" VerticalAlignment="Center" Margin="0,0,10,0"/>
+            <TextBlock Text="Чеки оплаты"
+                       Foreground="White" FontSize="20" FontWeight="SemiBold"
+                       VerticalAlignment="Center"/>
+            <Border x:Name="CountBadge" Background="#33FBBF24" CornerRadius="10"
+                    Padding="10,3" Margin="12,0,0,0" VerticalAlignment="Center">
+                <TextBlock x:Name="CountLabel" Text="0 ожидают"
+                           Foreground="#FBBF24" FontSize="11" FontWeight="SemiBold"/>
+            </Border>
+            <Button Content="↻  Обновить" Margin="16,0,0,0"
+                    Style="{StaticResource BaseButtonStyle}"
+                    Background="{StaticResource Bg3Brush}"
+                    Foreground="{StaticResource AccentBrush}"
+                    Height="32" Padding="14,0" FontSize="12"
+                    VerticalAlignment="Center"
+                    Click="RefreshBtn_Click"/>
+        </StackPanel>
+
+        <!-- ═══ EMPTY STATE ═══ -->
+        <Border x:Name="EmptyState" Grid.Row="1"
+                Visibility="Collapsed"
+                VerticalAlignment="Center" HorizontalAlignment="Center">
+            <StackPanel HorizontalAlignment="Center">
+                <TextBlock Text="✅" FontSize="44" HorizontalAlignment="Center"/>
+                <TextBlock Text="Все чеки обработаны" Foreground="White"
+                           FontSize="16" FontWeight="SemiBold"
+                           HorizontalAlignment="Center" Margin="0,14,0,0"/>
+                <TextBlock Text="Новые заявки появятся здесь автоматически"
+                           Foreground="{StaticResource MutedBrush}"
+                           FontSize="12" HorizontalAlignment="Center" Margin="0,4,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <!-- ═══ TABLE ═══ -->
+        <ScrollViewer x:Name="TableScroll" Grid.Row="1"
+                      VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Auto">
+            <StackPanel MinWidth="1240">
+
+                <!-- Column headers -->
+                <Border BorderThickness="1" BorderBrush="Transparent"
+                        Padding="16,0,16,8" Margin="0,0,0,4">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="140"/>
+                            <ColumnDefinition Width="*" MinWidth="190"/>
+                            <ColumnDefinition Width="170"/>
+                            <ColumnDefinition Width="135"/>
+                            <ColumnDefinition Width="110"/>
+                            <ColumnDefinition Width="82"/>
+                            <ColumnDefinition Width="410"/>
+                        </Grid.ColumnDefinitions>
+
+                        <TextBlock Grid.Column="0" Text="СТАТУС"        Style="{StaticResource ColHead}"/>
+                        <TextBlock Grid.Column="1" Text="ФИЛЬМ / СЕАНС" Style="{StaticResource ColHead}"/>
+                        <TextBlock Grid.Column="2" Text="КОД БРОНИ"     Style="{StaticResource ColHead}"/>
+                        <TextBlock Grid.Column="3" Text="ТЕЛЕФОН"       Style="{StaticResource ColHead}"/>
+                        <TextBlock Grid.Column="4" Text="СУММА"         Style="{StaticResource ColHead}"/>
+                        <TextBlock Grid.Column="5" Text="ЧЕК"           Style="{StaticResource ColHead}"/>
+                        <TextBlock Grid.Column="6" Text="ДЕЙСТВИЯ"      Style="{StaticResource ColHead}"/>
+                    </Grid>
+                </Border>
+
+                <!-- Rows -->
+                <ItemsControl x:Name="ReceiptsList">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="{StaticResource Bg2Brush}"
+                                    BorderBrush="{StaticResource BorderBrush}"
+                                    BorderThickness="1" CornerRadius="8"
+                                    Padding="16,12" Margin="0,0,0,8">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="140"/>
+                                        <ColumnDefinition Width="*" MinWidth="190"/>
+                                        <ColumnDefinition Width="170"/>
+                                        <ColumnDefinition Width="135"/>
+                                        <ColumnDefinition Width="110"/>
+                                        <ColumnDefinition Width="82"/>
+                                        <ColumnDefinition Width="410"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- 1. Статус -->
+                                    <Border Grid.Column="0"
+                                            Background="{Binding IsCancelledByClient, Mode=OneWay, Converter={StaticResource BoolToBadgeBgConverter}}"
+                                            CornerRadius="6" Padding="8,4"
+                                            HorizontalAlignment="Left" VerticalAlignment="Center"
+                                            Margin="0,0,12,0">
+                                        <TextBlock Text="{Binding StatusLabel, Mode=OneWay}"
+                                                   Foreground="{Binding IsCancelledByClient, Mode=OneWay, Converter={StaticResource BoolToColorConverter}}"
+                                                   FontSize="11" FontWeight="SemiBold"
+                                                   TextWrapping="Wrap"/>
+                                    </Border>
+
+                                    <!-- 2. Фильм / сеанс -->
+                                    <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,12,0">
+                                        <TextBlock Text="{Binding Movie}"
+                                                   Foreground="White" FontSize="14" FontWeight="SemiBold"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                        <TextBlock Text="{Binding ScreeningTime}"
+                                                   Foreground="{StaticResource AccentBrush}"
+                                                   FontSize="12" Margin="0,2,0,0"/>
+                                    </StackPanel>
+
+                                    <!-- 3. Код брони -->
+                                    <TextBox Grid.Column="2" Text="{Binding BookingCode, Mode=OneWay}"
+                                             IsReadOnly="True" BorderThickness="0" Background="Transparent"
+                                             Foreground="White" FontSize="13" FontWeight="SemiBold"
+                                             FontFamily="Consolas" Padding="0"
+                                             VerticalAlignment="Center" Margin="0,0,12,0"
+                                             ToolTip="Выделите, чтобы скопировать"/>
+
+                                    <!-- 4. Телефон -->
+                                    <TextBox Grid.Column="3" Text="{Binding Phone, Mode=OneWay}"
+                                             IsReadOnly="True" BorderThickness="0" Background="Transparent"
+                                             Foreground="White" FontSize="13" Padding="0"
+                                             VerticalAlignment="Center" Margin="0,0,12,0"
+                                             ToolTip="Выделите, чтобы скопировать"/>
+
+                                    <!-- 5. Сумма -->
+                                    <TextBlock Grid.Column="4" VerticalAlignment="Center" Margin="0,0,12,0">
+                                        <Run Text="{Binding TotalAmount, Mode=OneWay}"
+                                             Foreground="#22C55E" FontSize="14" FontWeight="Bold"/>
+                                        <Run Text="сом" Foreground="{StaticResource MutedBrush}" FontSize="11"/>
+                                    </TextBlock>
+
+                                    <!-- 6. Чек -->
+                                    <Button Grid.Column="5" Content="🖼"
+                                            Width="46" Height="34"
+                                            HorizontalAlignment="Left" VerticalAlignment="Center"
+                                            Style="{StaticResource BaseButtonStyle}"
+                                            Background="{StaticResource Bg3Brush}"
+                                            Foreground="White" FontSize="15" Padding="0"
+                                            Tag="{Binding ReceiptUrl}"
+                                            Click="ViewReceipt_Click"
+                                            ToolTip="Открыть чек оплаты"/>
+
+                                    <!-- 7. Действия -->
+                                    <Grid Grid.Column="6" VerticalAlignment="Center">
+                                        <!-- Ожидает подтверждения -->
+                                        <StackPanel Orientation="Horizontal"
+                                                    Visibility="{Binding IsCancelledByClient, Mode=OneWay, Converter={StaticResource InverseBoolToVisibilityConverter}}">
+                                            <Button Content="✅  Подтвердить"
+                                                    Width="136" Margin="0,0,6,0"
+                                                    Background="#16532D" Foreground="#22C55E"
+                                                    Style="{StaticResource RowAction}"
+                                                    Tag="{Binding Id}"
+                                                    Click="Confirm_Click"/>
+                                            <Button Content="➕  Доплата"
+                                                    Width="120" Margin="0,0,6,0"
+                                                    Background="#4A3A0A" Foreground="#FBBF24"
+                                                    Style="{StaticResource RowAction}"
+                                                    Tag="{Binding Id}"
+                                                    Click="RequestTopup_Click"
+                                                    ToolTip="Сумма пришла не полностью — запросить доплату"/>
+                                            <Button Content="❌  Отклонить"
+                                                    Width="124"
+                                                    Background="#450A0A" Foreground="#EF4444"
+                                                    Style="{StaticResource RowAction}"
+                                                    Tag="{Binding Id}"
+                                                    Click="Reject_Click"/>
+                                        </StackPanel>
+
+                                        <!-- Отменено клиентом -->
+                                        <Button Content="↩  Восстановить бронь"
+                                                Width="180" HorizontalAlignment="Left"
+                                                Background="#1E3A5F" Foreground="#60A5FA"
+                                                Style="{StaticResource RowAction}"
+                                                Tag="{Binding Id}"
+                                                Click="Restore_Click"
+                                                Visibility="{Binding IsCancelledByClient, Mode=OneWay, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                    </Grid>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

@@ -115,3 +115,38 @@ public class SeatShort
     [JsonProperty("number")] public int Number { get; set; }
     public string Label => $"Р{Row} М{Number}";
 }
+
+public class TicketVerifyResult
+{
+    [JsonProperty("valid")]           public bool Valid { get; set; }
+    [JsonProperty("reason")]          public string Reason { get; set; } = "";
+    [JsonProperty("already_used")]    public bool AlreadyUsed { get; set; }
+    [JsonProperty("manual_entry")]    public bool ManualEntry { get; set; }
+    [JsonProperty("booking_code")]    public string BookingCode { get; set; } = "";
+    [JsonProperty("movie")]           public string Movie { get; set; } = "";
+    [JsonProperty("screening_time")]  public string ScreeningTime { get; set; } = "";
+    [JsonProperty("hall")]            public string Hall { get; set; } = "";
+    [JsonProperty("seats")]           public List<string> Seats { get; set; } = new();
+    [JsonProperty("seats_count")]     public int SeatsCount { get; set; }
+    [JsonProperty("total_amount")]    public string TotalAmount { get; set; } = "";
+    [JsonProperty("phone")]           public string Phone { get; set; } = "";
+    [JsonProperty("checked_in_at")]   public string CheckedInAt { get; set; } = "";
+}
+
+public class PendingReceipt
+{
+    [JsonProperty("id")]              public int Id { get; set; }
+    [JsonProperty("booking_code")]    public string BookingCode { get; set; } = "";
+    [JsonProperty("movie")]           public string Movie { get; set; } = "";
+    [JsonProperty("screening_time")]  public string ScreeningTime { get; set; } = "";
+    [JsonProperty("hall")]            public string Hall { get; set; } = "";
+    [JsonProperty("total_amount")]    public string TotalAmount { get; set; } = "";
+    [JsonProperty("email")]           public string Email { get; set; } = "";
+    [JsonProperty("phone")]           public string Phone { get; set; } = "";
+    [JsonProperty("receipt_url")]     public string ReceiptUrl { get; set; } = "";
+    [JsonProperty("created_at")]      public string CreatedAt { get; set; } = "";
+    [JsonProperty("alert_type")]      public string AlertType { get; set; } = "pending";
+
+    public bool IsCancelledByClient => AlertType == "cancelled_by_client";
+    public string StatusLabel => IsCancelledByClient ? "❌ Клиент отменил" : "⏳ Ожидает подтверждения";
+}

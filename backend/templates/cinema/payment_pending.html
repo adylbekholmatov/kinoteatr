@@ -1,0 +1,364 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Оплата бронирования {{ booking.booking_code }} — Байэл Cinema{% endblock %}
+
+{% block extra_css %}
+<style>
+.pay-page {
+  min-height: calc(100vh - 70px);
+  padding: 40px 0 60px;
+}
+.pay-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,.2);
+}
+.pay-header {
+  background: linear-gradient(135deg, #c8102e 0%, #8b0d20 100%);
+  padding: 28px 32px;
+  text-align: center;
+}
+.pay-body { padding: 32px; }
+.pay-amount {
+  text-align: center;
+  margin-bottom: 32px;
+}
+.pay-amount-label { font-size: .85rem; color: var(--muted); text-transform: uppercase; letter-spacing: .8px; margin-bottom: 6px; }
+.pay-amount-value { font-size: 3rem; font-weight: 900; color: var(--text-bright); line-height: 1; }
+.pay-amount-currency { font-size: 1.2rem; font-weight: 500; color: var(--muted); margin-left: 6px; }
+
+.pay-divider { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+
+.pay-details {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+.pay-detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+.pay-detail-row:last-child { border-bottom: none; }
+.pay-detail-label { font-size: .8rem; color: var(--muted); text-transform: uppercase; letter-spacing: .5px; }
+.pay-detail-value { font-size: 1rem; font-weight: 700; color: var(--text-bright); }
+.pay-detail-value.big { font-size: 1.3rem; color: var(--red); letter-spacing: .5px; }
+
+.pay-warning {
+  background: rgba(234, 179, 8, .08);
+  border: 1px solid rgba(234, 179, 8, .3);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: .85rem;
+  color: #ca8a04;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  line-height: 1.5;
+}
+body.theme-light .pay-warning { color: #92400e; background: rgba(251,191,36,.12); }
+
+.pay-upload-zone {
+  border: 2px dashed var(--border);
+  border-radius: 14px;
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  position: relative;
+  margin-bottom: 16px;
+}
+.pay-upload-zone:hover,
+.pay-upload-zone.drag-over {
+  border-color: var(--red);
+  background: rgba(200,16,46,.04);
+}
+.pay-upload-zone input[type=file] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%;
+}
+.pay-upload-icon { font-size: 2rem; color: var(--muted); margin-bottom: 10px; }
+.pay-upload-text { font-size: .9rem; color: var(--muted); }
+.pay-upload-text strong { color: var(--red); }
+.pay-upload-preview { display: none; margin-top: 14px; }
+.pay-upload-preview img { max-width: 100%; max-height: 220px; border-radius: 10px; border: 1px solid var(--border); object-fit: contain; }
+
+.btn-pay-submit {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; padding: 15px;
+  background: #16a34a;
+  color: #fff;
+  border: none; border-radius: 12px;
+  font-size: 1rem; font-weight: 700;
+  cursor: pointer;
+  transition: background .2s, transform .15s;
+  box-shadow: 0 4px 16px rgba(22,163,74,.35);
+}
+.btn-pay-submit:hover { background: #15803d; transform: translateY(-1px); }
+.btn-pay-submit:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+
+.pay-status-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: rgba(234,179,8,.12);
+  color: #ca8a04;
+  border: 1px solid rgba(234,179,8,.3);
+  border-radius: 20px;
+  padding: 4px 14px;
+  font-size: .8rem; font-weight: 600;
+}
+.pay-status-badge.uploaded {
+  background: rgba(34,197,94,.1);
+  color: #16a34a;
+  border-color: rgba(34,197,94,.3);
+}
+.pay-steps { display: flex; gap: 0; margin-bottom: 28px; }
+.pay-step {
+  flex: 1; text-align: center; position: relative;
+  padding: 0 8px;
+}
+.pay-step::after {
+  content: '';
+  position: absolute; top: 14px; left: 50%; width: 100%;
+  height: 2px; background: var(--border); z-index: 0;
+}
+.pay-step:last-child::after { display: none; }
+.pay-step-dot {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .75rem; font-weight: 700;
+  margin: 0 auto 6px;
+  position: relative; z-index: 1;
+  border: 2px solid var(--border);
+  background: var(--card-bg);
+  color: var(--muted);
+}
+.pay-step.done .pay-step-dot { background: var(--red); border-color: var(--red); color: #fff; }
+.pay-step.active .pay-step-dot { border-color: var(--red); color: var(--red); }
+.pay-step-label { font-size: .72rem; color: var(--muted); }
+.pay-step.done .pay-step-label,
+.pay-step.active .pay-step-label { color: var(--text); font-weight: 600; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="pay-page">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-10 col-lg-7 col-xl-6">
+
+        <div class="pay-card">
+
+          <!-- Header -->
+          <div class="pay-header">
+            <div style="font-size:.8rem; color:rgba(255,255,255,.7); text-transform:uppercase; letter-spacing:1px; margin-bottom:4px;">
+              {{ booking.booking_code }}
+            </div>
+            <div style="font-size:1.2rem; font-weight:700; color:#fff;">
+              {{ booking.screening.movie.title_ru }}
+            </div>
+            <div style="font-size:.85rem; color:rgba(255,255,255,.75); margin-top:4px;">
+              {{ booking.screening.start_time|date:"d.m.Y" }} в {{ booking.screening.start_time|date:"H:i" }} · {{ booking.screening.hall.name }}
+            </div>
+
+            <!-- Status -->
+            <div style="margin-top:14px;">
+              {% if booking.status == 'receipt_uploaded' %}
+                <span class="pay-status-badge uploaded"><i class="fa-solid fa-check-circle"></i> Чек загружен, ожидаем проверки</span>
+              {% else %}
+                <span class="pay-status-badge"><i class="fa-solid fa-hourglass-half"></i> Ожидает оплаты</span>
+              {% endif %}
+            </div>
+          </div>
+
+          <!-- Body -->
+          <div class="pay-body">
+
+            <!-- Steps -->
+            <div class="pay-steps">
+              <div class="pay-step done">
+                <div class="pay-step-dot"><i class="fa-solid fa-check" style="font-size:.65rem;"></i></div>
+                <div class="pay-step-label">Выбор мест</div>
+              </div>
+              <div class="pay-step {% if booking.status == 'receipt_uploaded' %}done{% else %}active{% endif %}">
+                <div class="pay-step-dot">2</div>
+                <div class="pay-step-label">Перевод</div>
+              </div>
+              <div class="pay-step {% if booking.status == 'receipt_uploaded' %}active{% endif %}">
+                <div class="pay-step-dot">3</div>
+                <div class="pay-step-label">Подтверждение</div>
+              </div>
+            </div>
+
+            <!-- Amount -->
+            <div class="pay-amount">
+              <div class="pay-amount-label">{% if lang == 'ky' %}Төлөм суммасы{% else %}Сумма к оплате{% endif %}</div>
+              <div>
+                <span class="pay-amount-value">{{ booking.total_amount|floatformat:0 }}</span>
+                <span class="pay-amount-currency">сом</span>
+              </div>
+              <div style="font-size:.8rem; color:var(--muted); margin-top:6px;">
+                {{ booking.booked_seats.count }} {{ booking.booked_seats.count|pluralize:"место,места,мест" }} × {{ booking.screening.price }} сом
+              </div>
+            </div>
+
+            <!-- Warning -->
+            <div class="pay-warning">
+              <i class="fa-solid fa-triangle-exclamation" style="flex-shrink:0; margin-top:2px;"></i>
+              <span>Переводите <strong>точную сумму — {{ booking.total_amount|floatformat:0 }} сом</strong>. При неполной оплате бронирование будет отменено.</span>
+            </div>
+
+            <!-- Bank details -->
+            <div class="pay-details">
+              <div class="pay-detail-row">
+                <span class="pay-detail-label">Банк / Система</span>
+                <span class="pay-detail-value">{{ transfer_bank }}</span>
+              </div>
+              <div class="pay-detail-row">
+                <span class="pay-detail-label">Номер телефона</span>
+                <span class="pay-detail-value big" style="cursor:pointer;" onclick="navigator.clipboard.writeText('{{ transfer_phone }}'); this.title='Скопировано!';" title="Нажмите чтобы скопировать">
+                  {{ transfer_phone }} <i class="fa-regular fa-copy" style="font-size:.75rem; opacity:.5; margin-left:4px;"></i>
+                </span>
+              </div>
+              {% if transfer_card %}
+              <div class="pay-detail-row">
+                <span class="pay-detail-label">Номер счёта / карты</span>
+                <span class="pay-detail-value big" style="cursor:pointer;" onclick="navigator.clipboard.writeText('{{ transfer_card }}'.replace(/\s/g, '')); this.title='Скопировано!';" title="Нажмите чтобы скопировать">
+                  {{ transfer_card }} <i class="fa-regular fa-copy" style="font-size:.75rem; opacity:.5; margin-left:4px;"></i>
+                </span>
+              </div>
+              {% endif %}
+              <div class="pay-detail-row">
+                <span class="pay-detail-label">Получатель</span>
+                <span class="pay-detail-value">{{ transfer_name }}</span>
+              </div>
+              <div class="pay-detail-row">
+                <span class="pay-detail-label">Комментарий к переводу</span>
+                <span class="pay-detail-value" style="font-size:.85rem; cursor:pointer;" onclick="navigator.clipboard.writeText('{{ booking.booking_code }}');" title="Нажмите чтобы скопировать">
+                  {{ booking.booking_code }} <i class="fa-regular fa-copy" style="font-size:.75rem; opacity:.5; margin-left:4px;"></i>
+                </span>
+              </div>
+            </div>
+
+            <hr class="pay-divider">
+
+            <!-- Upload receipt -->
+            {% if booking.status != 'paid' and booking.status != 'cancelled' %}
+            <div style="margin-bottom:8px;">
+              <div style="font-size:.9rem; font-weight:700; color:var(--text-bright); margin-bottom:4px;">
+                <i class="fa-solid fa-image" style="color:var(--red); margin-right:6px;"></i>
+                {% if lang == 'ky' %}Чек скриншотун жүктөңүз{% else %}Загрузите скриншот чека{% endif %}
+              </div>
+              <div style="font-size:.8rem; color:var(--muted); margin-bottom:14px;">
+                После перевода сделайте скриншот подтверждения и загрузите его ниже
+              </div>
+            </div>
+
+            {% if booking.status == 'receipt_uploaded' and booking.payment_receipt %}
+            <div style="text-align:center; margin-bottom:20px;">
+              <div style="font-size:.8rem; color:var(--muted); margin-bottom:8px;">Загруженный чек:</div>
+              <img src="{{ booking.payment_receipt.url }}" alt="Чек" style="max-width:100%; max-height:240px; border-radius:10px; border:1px solid var(--border); object-fit:contain;">
+              {% if booking.payment_note %}
+              <div style="margin-top:12px; background:rgba(239,68,68,.08); border:1px solid rgba(239,68,68,.25); border-radius:8px; padding:12px; font-size:.85rem; color:#ef4444;">
+                <i class="fa-solid fa-comment"></i> {{ booking.payment_note }}
+              </div>
+              {% endif %}
+            </div>
+            {% endif %}
+
+            <form method="post" action="{% url 'upload_receipt' booking.booking_code %}" enctype="multipart/form-data" id="receiptForm">
+              {% csrf_token %}
+
+              <div class="pay-upload-zone" id="uploadZone">
+                <input type="file" name="receipt" accept="image/*" id="receiptInput" required>
+                <div class="pay-upload-icon"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                <div class="pay-upload-text">
+                  <strong>Нажмите или перетащите</strong> скриншот чека<br>
+                  <span style="font-size:.75rem;">JPG, PNG, WebP — до 10 МБ</span>
+                </div>
+                <div class="pay-upload-preview" id="uploadPreview">
+                  <img id="previewImg" src="" alt="Предпросмотр">
+                </div>
+              </div>
+
+              <button type="submit" class="btn-pay-submit" id="submitBtn" disabled>
+                <i class="fa-solid fa-paper-plane"></i>
+                {% if lang == 'ky' %}Чек жөнөтүү{% else %}Отправить чек на проверку{% endif %}
+              </button>
+            </form>
+            {% endif %}
+
+            {% if booking.status == 'paid' %}
+            <div style="text-align:center; padding:20px 0; color:#16a34a;">
+              <i class="fa-solid fa-circle-check" style="font-size:3rem;"></i>
+              <div style="font-size:1.1rem; font-weight:700; margin-top:10px;">Оплата подтверждена!</div>
+              <a href="{% url 'booking_success' booking.booking_code %}" class="btn btn-success mt-3">
+                <i class="fa-solid fa-ticket"></i> Мой билет
+              </a>
+            </div>
+            {% endif %}
+
+            {% if booking.status == 'cancelled' %}
+            <div style="text-align:center; padding:20px 0; color:#ef4444;">
+              <i class="fa-solid fa-circle-xmark" style="font-size:3rem;"></i>
+              <div style="font-size:1rem; font-weight:700; margin-top:10px;">Бронирование отменено</div>
+              {% if booking.payment_note %}
+              <div style="margin-top:10px; font-size:.85rem; color:var(--muted);">{{ booking.payment_note }}</div>
+              {% endif %}
+              <a href="{% url 'schedule' %}" class="btn btn-danger mt-3">Выбрать другой сеанс</a>
+            </div>
+            {% endif %}
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const input    = document.getElementById('receiptInput');
+const zone     = document.getElementById('uploadZone');
+const preview  = document.getElementById('uploadPreview');
+const img      = document.getElementById('previewImg');
+const submitBtn = document.getElementById('submitBtn');
+
+if (input) {
+  input.addEventListener('change', function () {
+    const file = this.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+      img.src = e.target.result;
+      preview.style.display = 'block';
+      submitBtn.disabled = false;
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Drag & drop
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const dt = new DataTransfer();
+      dt.items.add(file);
+      input.files = dt.files;
+      input.dispatchEvent(new Event('change'));
+    }
+  });
+}
+</script>
+{% endblock %}

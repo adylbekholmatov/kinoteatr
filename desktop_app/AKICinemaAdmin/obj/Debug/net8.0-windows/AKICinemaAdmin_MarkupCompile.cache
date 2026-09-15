@@ -1,5 +1,5 @@
 ﻿AKICinemaAdmin
-
+1.0.0.0
 
 winexe
 C#
@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP;WINDOWS;WINDOWS7_0;NET5_0_OR_GREATER;NET6_0_OR_GREATER;NET7_0_OR_GREATER;NET8_0_OR_GREATER;NETCOREAPP3_0_OR_GREATER;NETCOREAPP3_1_OR_GREATER;WINDOWS7_0_OR_GREATER
 C:\Users\user\Desktop\kinoteatr\desktop_app\AKICinemaAdmin\App.xaml
-61754050192
+81813999213
 
-101625855942
-1991795466215
-Views\BookingSuccessPage.xaml;Views\LoginView.xaml;Views\MainWindow.xaml;Views\SchedulePage.xaml;Views\SearchView.xaml;Views\SeatSelectionPage.xaml;
+141833530729
+204-711197289
+Views\BookingSuccessPage.xaml;Views\LoginView.xaml;Views\MainWindow.xaml;Views\ReceiptsPage.xaml;Views\ScanTicketPage.xaml;Views\SchedulePage.xaml;Views\SearchView.xaml;Views\SeatSelectionPage.xaml;
 
-False
+True
 

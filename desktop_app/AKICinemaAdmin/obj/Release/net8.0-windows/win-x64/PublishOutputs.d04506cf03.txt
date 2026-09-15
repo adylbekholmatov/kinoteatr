@@ -1,0 +1,7 @@
+C:\Users\user\Desktop\kinoteatr\desktop_app\AKICinemaAdmin\publish\AKICinemaAdmin.pdb
+C:\Users\user\Desktop\kinoteatr\desktop_app\AKICinemaAdmin\publish\D3DCompiler_47_cor3.dll
+C:\Users\user\Desktop\kinoteatr\desktop_app\AKICinemaAdmin\publish\PenImc_cor3.dll
+C:\Users\user\Desktop\kinoteatr\desktop_app\AKICinemaAdmin\publish\PresentationNative_cor3.dll
+C:\Users\user\Desktop\kinoteatr\desktop_app\AKICinemaAdmin\publish\vcruntime140_cor3.dll
+C:\Users\user\Desktop\kinoteatr\desktop_app\AKICinemaAdmin\publish\wpfgfx_cor3.dll
+C:\Users\user\Desktop\kinoteatr\desktop_app\AKICinemaAdmin\publish\AKICinemaAdmin.exe

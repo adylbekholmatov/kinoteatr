@@ -158,6 +158,35 @@
       <!-- Auth -->
       <div class="d-flex align-items-center gap-2">
         {% if user.is_authenticated %}
+          <!-- Notification bell -->
+          <div class="position-relative me-1" id="notifBellWrap">
+            <button class="nav-auth-btn nav-auth-ghost" id="notifBellBtn"
+                    style="position:relative; padding:.4rem .7rem;"
+                    onclick="toggleNotifDropdown(event)">
+              <i class="fas fa-bell"></i>
+              <span id="notifBadge" class="position-absolute top-0 start-100 translate-middle
+                    badge rounded-pill bg-danger" style="font-size:.6rem; display:none;">0</span>
+            </button>
+            <div id="notifDropdown"
+                 style="display:none; position:absolute; right:0; top:110%; width:320px; z-index:9999;
+                        background:#0f0f1a; border:1px solid #2d2d5e; border-radius:12px;
+                        box-shadow:0 8px 32px rgba(0,0,0,.7); overflow:hidden;">
+              <div style="padding:12px 16px; border-bottom:1px solid #2d2d5e; display:flex; justify-content:space-between; align-items:center;">
+                <span style="color:#fff; font-weight:600; font-size:.9rem;">
+                  {% if current_lang == 'ky' %}Билдирмелер{% else %}Уведомления{% endif %}
+                </span>
+                <button onclick="markAllRead()" style="background:none; border:none; color:#a0a0c8; font-size:.78rem; cursor:pointer;">
+                  {% if current_lang == 'ky' %}Баарын окулду деп белгилөө{% else %}Отметить все прочитанными{% endif %}
+                </button>
+              </div>
+              <div id="notifList" style="max-height:320px; overflow-y:auto; padding:8px 0;">
+                <div style="text-align:center; padding:24px; color:#a0a0c8; font-size:.85rem;">
+                  {% if current_lang == 'ky' %}Жаңы билдирмелер жок{% else %}Нет новых уведомлений{% endif %}
+                </div>
+              </div>
+            </div>
+          </div>
+
           <a href="{% url 'my_bookings' %}" class="nav-auth-btn nav-auth-ghost">
             <i class="fas fa-ticket-alt"></i>
             {% if current_lang == 'ky' %}Билеттерим{% else %}Мои билеты{% endif %}
@@ -265,5 +294,70 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="{% static 'js/main.js' %}"></script>
 {% block extra_js %}{% endblock %}
+
+{% if user.is_authenticated %}
+<script>
+(function() {
+  const POLL_MS = 30000;
+  let open = false;
+
+  function toggleNotifDropdown(e) {
+    e.stopPropagation();
+    open = !open;
+    document.getElementById('notifDropdown').style.display = open ? 'block' : 'none';
+    if (open) fetchNotifications();
+  }
+  window.toggleNotifDropdown = toggleNotifDropdown;
+
+  document.addEventListener('click', function(e) {
+    if (!document.getElementById('notifBellWrap').contains(e.target)) {
+      open = false;
+      document.getElementById('notifDropdown').style.display = 'none';
+    }
+  });
+
+  function fetchNotifications() {
+    fetch('/api/my-notifications/', {credentials: 'same-origin'})
+      .then(r => r.json())
+      .then(data => {
+        const count = data.count || 0;
+        const badge = document.getElementById('notifBadge');
+        badge.textContent = count;
+        badge.style.display = count > 0 ? 'inline-block' : 'none';
+
+        const list = document.getElementById('notifList');
+        if (!data.notifications || data.notifications.length === 0) {
+          list.innerHTML = '<div style="text-align:center;padding:24px;color:#a0a0c8;font-size:.85rem;">Нет новых уведомлений</div>';
+          return;
+        }
+        list.innerHTML = data.notifications.map(n => `
+          <div style="padding:12px 16px;border-bottom:1px solid #1e1e3a;">
+            <div style="color:#fff;font-size:.87rem;line-height:1.4;">${n.message}</div>
+            <div style="color:#6b6b9e;font-size:.75rem;margin-top:4px;">${n.created_at}${n.booking_code ? ' · <span style="color:#8b5cf6;">' + n.booking_code + '</span>' : ''}</div>
+          </div>`).join('');
+      })
+      .catch(() => {});
+  }
+
+  window.markAllRead = function() {
+    fetch('/api/my-notifications/', {method:'POST', credentials:'same-origin',
+      headers:{'X-CSRFToken': getCookie('csrftoken')}})
+      .then(() => {
+        document.getElementById('notifBadge').style.display = 'none';
+        document.getElementById('notifList').innerHTML =
+          '<div style="text-align:center;padding:24px;color:#a0a0c8;font-size:.85rem;">Нет новых уведомлений</div>';
+      });
+  };
+
+  function getCookie(name) {
+    const v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+    return v ? v[2] : '';
+  }
+
+  fetchNotifications();
+  setInterval(fetchNotifications, POLL_MS);
+})();
+</script>
+{% endif %}
 </body>
 </html>

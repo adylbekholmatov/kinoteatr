@@ -3,12 +3,9 @@
     "",
     "\\AKICinemaAdmin",
     "\\AKICinemaAdmin\\bin",
-    "\\AKICinemaAdmin\\Converters",
-    "\\AKICinemaAdmin\\Models",
-    "\\AKICinemaAdmin\\obj",
-    "\\AKICinemaAdmin\\Services",
-    "\\AKICinemaAdmin\\Views"
+    "\\AKICinemaAdmin\\bin\\Release",
+    "\\AKICinemaAdmin\\bin\\Release\\net8.0-windows"
   ],
-  "SelectedNode": "\\AKICinemaAdmin\\App.xaml.cs",
+  "SelectedNode": "\\AKICinemaAdmin\\bin\\Release\\net8.0-windows\\AKICinemaAdmin.exe",
   "PreviewInSolutionExplorer": false
 }

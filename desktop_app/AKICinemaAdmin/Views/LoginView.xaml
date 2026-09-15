@@ -44,12 +44,14 @@
                     </StackPanel>
                     <Button HorizontalAlignment="Right"
                             Width="28" Height="28"
-                            Content="✕"
+                            Content="&#xE8BB;"
                             Foreground="{StaticResource MutedBrush}"
                             Click="CloseButton_Click"
                             Style="{StaticResource BaseButtonStyle}"
                             Background="Transparent"
-                            FontSize="14"/>
+                            FontFamily="Segoe MDL2 Assets"
+                            Padding="0"
+                            FontSize="10"/>
                 </Grid>
             </Border>
 
@@ -70,7 +72,7 @@
                 <!-- Server URL -->
                 <TextBlock Text="Адрес сервера" Style="{StaticResource Label}"/>
                 <TextBox x:Name="ServerUrlBox" Style="{StaticResource AkiTextBox}"
-                         Text="http://127.0.0.1:8000" Margin="0,0,0,16"/>
+                         Text="https://bayel-cinema.online/api/" Margin="0,0,0,16"/>
 
                 <!-- Username -->
                 <TextBlock Text="Логин" Style="{StaticResource Label}"/>

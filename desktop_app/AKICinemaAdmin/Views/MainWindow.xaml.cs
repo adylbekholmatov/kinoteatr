@@ -1,22 +1,51 @@
 using System;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Threading;
 
 namespace AKICinemaAdmin.Views;
 
 public partial class MainWindow : Window
 {
+    // Segoe MDL2 Assets glyphs
+    private const string GlyphMaximize = "\uE922";
+    private const string GlyphRestore  = "\uE923";
+
+    private readonly DispatcherTimer _pollTimer;
+
     public MainWindow()
     {
         InitializeComponent();
         UserLabel.Text = $"👤 {App.Api.Username}";
 
-        // Prevent window from covering taskbar when maximized with WindowStyle=None
         MaxHeight = SystemParameters.WorkArea.Height;
         MaxWidth  = SystemParameters.WorkArea.Width;
 
         NavigateToSchedule();
         UpdateMaxRestoreButton();
+
+        // Poll every 30 seconds for pending receipts
+        _pollTimer = new DispatcherTimer { Interval = TimeSpan.FromSeconds(30) };
+        _pollTimer.Tick += async (_, _) => await RefreshPendingReceiptsAsync();
+        _pollTimer.Start();
+
+        // Initial check
+        _ = RefreshPendingReceiptsAsync();
+    }
+
+    private async System.Threading.Tasks.Task RefreshPendingReceiptsAsync()
+    {
+        try
+        {
+            var receipts = await App.Api.GetPendingReceiptsAsync();
+            int count = receipts.Count;
+            Dispatcher.Invoke(() =>
+            {
+                ReceiptBadgeText.Text = count.ToString();
+                ReceiptBadge.Visibility = count > 0 ? Visibility.Visible : Visibility.Collapsed;
+            });
+        }
+        catch { }
     }
 
     private void Window_StateChanged(object sender, EventArgs e)
@@ -25,20 +54,16 @@ public partial class MainWindow : Window
     private void UpdateMaxRestoreButton()
     {
         if (MaxRestoreBtn == null) return;
-        MaxRestoreBtn.Content = WindowState == WindowState.Maximized ? "❐" : "□";
-        MaxRestoreBtn.ToolTip  = WindowState == WindowState.Maximized ? "Восстановить" : "Развернуть";
+        bool max = WindowState == WindowState.Maximized;
+        MaxRestoreBtn.Content = max ? GlyphRestore : GlyphMaximize;
+        MaxRestoreBtn.ToolTip = max ? "Восстановить" : "Развернуть";
     }
 
     private void TitleBar_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
     {
-        if (e.ClickCount == 2)
-        {
-            ToggleMaximize();
-            return;
-        }
+        if (e.ClickCount == 2) { ToggleMaximize(); return; }
         if (WindowState == WindowState.Maximized)
         {
-            // Allow dragging from maximized state
             WindowState = WindowState.Normal;
             Left = Mouse.GetPosition(this).X - Width / 2;
             Top  = 0;
@@ -64,6 +89,7 @@ public partial class MainWindow : Window
 
     private void LogoutButton_Click(object sender, RoutedEventArgs e)
     {
+        _pollTimer.Stop();
         App.Api.Logout();
         var login = new LoginView();
         login.Show();
@@ -75,6 +101,16 @@ public partial class MainWindow : Window
 
     private void BtnSearch_Click(object sender, RoutedEventArgs e)
         => ContentFrame.Navigate(new SearchView());
+
+    private void BtnScan_Click(object sender, RoutedEventArgs e)
+        => ContentFrame.Navigate(new ScanTicketPage());
+
+    private void BtnReceipts_Click(object sender, RoutedEventArgs e)
+    {
+        var page = new ReceiptsPage();
+        page.ReceiptsRefreshed += async () => await RefreshPendingReceiptsAsync();
+        ContentFrame.Navigate(page);
+    }
 
     public void NavigateToSchedule()
     {

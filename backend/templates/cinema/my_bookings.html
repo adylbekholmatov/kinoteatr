@@ -160,11 +160,11 @@
     <i class="fas fa-info-circle"></i>
     <span>
       {% if lang == 'ky' %}
-        Сеанс башталганга чейин билетти жокко чыгарууга болот. Акча 3–5 жумуш күндүн ичинде кайтарылат.
-        <a href="{% url 'refund_policy' %}" class="text-warning">Кайтаруу шарттары →</a>
+        Сеанс башталганга чейин билетти жокко чыгарууга болот.
+        <strong style="color:#ef4444;">Жокко чыгарылган учурда акча кайтарылбайт.</strong>
       {% else %}
-        Вы можете отменить билет до начала сеанса. Деньги вернутся в течение 3–5 рабочих дней.
-        <a href="{% url 'refund_policy' %}" class="text-warning">Условия возврата →</a>
+        Вы можете отменить билет до начала сеанса.
+        <strong style="color:#ef4444;">При отмене оплаченного билета деньги не возвращаются.</strong>
       {% endif %}
     </span>
   </div>
@@ -216,6 +216,18 @@
           <span class="text-muted small">{{ booking.created_at|date:"d.m.Y" }}</span>
         </div>
 
+        {# E-ticket button: only for confirmed (paid) bookings #}
+        {% if booking.status == 'paid' %}
+        <div class="booking-card-cancel" style="border-bottom:1px solid rgba(255,255,255,.06);">
+          <a href="{% url 'ticket' booking.booking_code %}"
+             class="btn-cancel-booking"
+             style="background:#16532d; color:#22c55e; text-decoration:none; display:block; text-align:center;">
+            <i class="fas fa-qrcode me-1"></i>
+            {% if lang == 'ky' %}Менин билетим{% else %}Мой билет{% endif %}
+          </a>
+        </div>
+        {% endif %}
+
         {# Cancel button: show only for active bookings where screening hasn't started #}
         {% if booking.status != 'cancelled' and booking.screening.start_time > now %}
         <div class="booking-card-cancel">
@@ -249,7 +261,7 @@
   <div class="cancel-modal">
     <i class="fas fa-exclamation-triangle fa-2x text-warning mb-3"></i>
     <h5 id="cancelModalTitle">Отменить бронирование?</h5>
-    <p id="cancelModalText">Деньги вернутся в течение 3–5 рабочих дней. Это действие нельзя отменить.</p>
+    <p id="cancelModalText" style="color:#ef4444; font-weight:600;">⚠️ При отмене оплаченного билета деньги не возвращаются. Это действие нельзя отменить.</p>
     <div class="cancel-modal-btns">
       <button type="button" class="btn btn-outline-secondary" id="cancelModalNo">
         {% if lang == 'ky' %}Жок{% else %}Нет{% endif %}
@@ -286,8 +298,8 @@
         ? code + ' — жокко чыгаруу?'
         : 'Отменить бронирование ' + code + '?';
       modalText.textContent = LANG === 'ky'
-        ? 'Акча 3–5 жумуш күндүн ичинде кайтарылат. Бул аракетти жокко чыгаруу мүмкүн эмес.'
-        : 'Деньги вернутся в течение 3–5 рабочих дней. Это действие нельзя отменить.';
+        ? '⚠️ Төлөнгөн билет жокко чыгарылганда акча кайтарылбайт. Бул аракетти жокко чыгаруу мүмкүн эмес.'
+        : '⚠️ При отмене оплаченного билета деньги не возвращаются. Это действие нельзя отменить.';
 
       cancelForm.setAttribute('action', url);
       backdrop.classList.add('show');

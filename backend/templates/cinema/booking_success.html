@@ -8,19 +8,45 @@
   <div class="row justify-content-center">
     <div class="col-lg-7">
       <div class="success-card text-center">
+
+        {% if booking.status == 'paid' %}
         <div class="success-icon mb-4">
           <i class="fas fa-check-circle"></i>
         </div>
         <h2 class="text-success mb-2">
-          {% if lang == 'ky' %}Төлөм ийгиликтүү өттү!{% else %}Оплата прошла успешно!{% endif %}
+          {% if lang == 'ky' %}Төлөм ырасталды!{% else %}Оплата подтверждена!{% endif %}
         </h2>
         <p class="text-muted mb-4">
           {% if lang == 'ky' %}
-            Билет маалыматы {{ booking.email }} дарегине жөнөтүлдү.
+            Билетиңиз даяр. Кассада QR-кодду көрсөтүңүз.
           {% else %}
-            Детали билета отправлены на {{ booking.email }}
+            Ваш билет готов. Покажите QR-код на кассе.
           {% endif %}
         </p>
+
+        {% else %}
+        <div class="success-icon mb-4" style="color:#fbbf24;">
+          <i class="fas fa-hourglass-half"></i>
+        </div>
+        <h2 class="mb-2" style="color:#fbbf24;">
+          {% if lang == 'ky' %}Чек кабыл алынды!{% else %}Вы оплатили — ожидайте подтверждения{% endif %}
+        </h2>
+        <p class="text-muted mb-2">
+          {% if lang == 'ky' %}
+            Администратор чекти текшерет. Ырасталгандан кийин билетиңиз даяр болот.
+          {% else %}
+            Администратор проверит платёж. После подтверждения билет появится в разделе «Мои билеты».
+          {% endif %}
+        </p>
+        <p class="mb-4" style="color:#8b8bb5; font-size:.85rem;">
+          <i class="fas fa-bell me-1"></i>
+          {% if lang == 'ky' %}
+            Уведомление сайттагы коңгуроодон келет.
+          {% else %}
+            Уведомление придёт в колокольчик на сайте.
+          {% endif %}
+        </p>
+        {% endif %}
 
         <!-- Ticket -->
         <div class="ticket-card mx-auto">
@@ -69,6 +95,11 @@
         </div>
 
         <div class="mt-4 d-flex gap-3 justify-content-center flex-wrap">
+          {% if booking.status == 'paid' %}
+          <a href="{% url 'ticket' booking.booking_code %}" class="btn btn-success">
+            <i class="fas fa-qrcode me-2"></i>{% if lang == 'ky' %}Менин билетим{% else %}Мой билет{% endif %}
+          </a>
+          {% endif %}
           <a href="{% url 'index' %}" class="btn btn-danger">
             <i class="fas fa-home me-2"></i>{% if lang == 'ky' %}Башкы бет{% else %}На главную{% endif %}
           </a>
@@ -77,9 +108,6 @@
             <i class="fas fa-ticket-alt me-2"></i>{% if lang == 'ky' %}Билеттерим{% else %}Мои билеты{% endif %}
           </a>
           {% endif %}
-          <button class="btn btn-outline-secondary" onclick="window.print()">
-            <i class="fas fa-print me-2"></i>{% if lang == 'ky' %}Басып чыгаруу{% else %}Распечатать{% endif %}
-          </button>
         </div>
       </div>
     </div>

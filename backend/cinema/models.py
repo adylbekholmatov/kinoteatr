@@ -136,7 +136,8 @@ def generate_booking_code():
 
 class Booking(models.Model):
     STATUS_CHOICES = [
-        ('pending', 'Ожидание оплаты'),
+        ('pending', 'Ожидает оплаты'),
+        ('receipt_uploaded', 'Чек загружен'),
         ('paid', 'Оплачено'),
         ('reserved', 'Зарезервировано (касса)'),
         ('cancelled', 'Отменено'),
@@ -149,10 +150,20 @@ class Booking(models.Model):
     address = models.CharField('Адрес', max_length=300, blank=True, default='')
     total_amount = models.DecimalField('Сумма', max_digits=10, decimal_places=2)
     booking_code = models.CharField('Код бронирования', max_length=20, unique=True, default=generate_booking_code)
-    status = models.CharField('Статус', max_length=10, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField('Статус', max_length=20, choices=STATUS_CHOICES, default='pending')
     paybox_payment_id = models.CharField('Paybox Payment ID', max_length=50, blank=True, default='')
     card_last4 = models.CharField('Последние 4 цифры карты', max_length=4, blank=True)
     is_admin_booking = models.BooleanField('Касса', default=False)
+    payment_receipt = models.ImageField('Чек оплаты', upload_to='receipts/', blank=True, null=True)
+    payment_note = models.TextField('Примечание по оплате', blank=True, default='')
+    checked_in_at = models.DateTimeField('Вход по билету', null=True, blank=True)
+    # Кто принял решение по оплате (подтвердил / отклонил / запросил доплату).
+    # Исход читается из status, поэтому одной пары полей достаточно.
+    processed_by = models.ForeignKey(
+        User, on_delete=models.SET_NULL, null=True, blank=True,
+        related_name='processed_bookings', verbose_name='Оплату обработал',
+    )
+    processed_at = models.DateTimeField('Время обработки оплаты', null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -183,3 +194,19 @@ class BookedSeat(models.Model):
 
     def __str__(self):
         return f'{self.booking.booking_code} | Ряд {self.seat.row}, Место {self.seat.number}'
+
+
+class Notification(models.Model):
+    user    = models.ForeignKey(User, on_delete=models.CASCADE, related_name='notifications')
+    booking = models.ForeignKey(Booking, on_delete=models.SET_NULL, null=True, blank=True)
+    message = models.TextField()
+    is_read = models.BooleanField(default=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Уведомление'
+        verbose_name_plural = 'Уведомления'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f'{self.user.username} — {self.message[:40]}'

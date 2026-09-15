@@ -20,6 +20,9 @@ urlpatterns = [
     path('bookings/', panel_views.panel_bookings, name='panel_bookings'),
     path('bookings/<int:pk>/', panel_views.panel_booking_detail, name='panel_booking_detail'),
     path('bookings/<int:pk>/status/', panel_views.panel_booking_status, name='panel_booking_status'),
+    path('bookings/<int:pk>/confirm/', panel_views.panel_booking_confirm, name='panel_booking_confirm'),
+    path('bookings/<int:pk>/reject/', panel_views.panel_booking_reject, name='panel_booking_reject'),
+    path('bookings/<int:pk>/request-topup/', panel_views.panel_booking_request_topup, name='panel_booking_request_topup'),
 
     # Halls
     path('halls/', panel_views.panel_halls, name='panel_halls'),

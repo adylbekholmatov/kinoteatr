@@ -1,0 +1,177 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Билет {{ booking.booking_code }} — Байэл Cinema{% endblock %}
+
+{% block extra_css %}
+<style>
+  .ticket-wrap { max-width: 480px; margin: 40px auto 60px; }
+
+  .ticket {
+    background: linear-gradient(160deg, #1a1a2e 0%, #16162a 100%);
+    border: 1px solid #2d2d5e;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.5);
+  }
+
+  .ticket-head {
+    background: linear-gradient(135deg, #c8102e 0%, #9b0c22 100%);
+    padding: 22px 26px;
+    text-align: center;
+  }
+  .ticket-head h2 { color:#fff; font-size:1.35rem; font-weight:800; margin:0; }
+  .ticket-head .sub { color: rgba(255,255,255,.85); font-size:.82rem; margin-top:4px; }
+
+  .ticket-body { padding: 26px; }
+
+  .t-row { display:flex; justify-content:space-between; align-items:flex-start;
+           padding:12px 0; border-bottom:1px solid #24244a; }
+  .t-row:last-child { border-bottom:none; }
+  .t-label { color:#8b8bb5; font-size:.78rem; text-transform:uppercase; letter-spacing:.4px; }
+  .t-value { color:#fff; font-size:.98rem; font-weight:600; text-align:right; }
+
+  .seats-wrap { display:flex; flex-wrap:wrap; gap:6px; justify-content:flex-end; }
+  .seat-chip {
+    background:#c8102e; color:#fff; padding:4px 10px;
+    border-radius:6px; font-size:.8rem; font-weight:700;
+  }
+
+  /* perforated divider */
+  .ticket-divider { position:relative; height:30px; background:transparent; }
+  .ticket-divider::before, .ticket-divider::after {
+    content:''; position:absolute; top:50%; transform:translateY(-50%);
+    width:28px; height:28px; border-radius:50%;
+    background: var(--bg, #0f0f1a);
+  }
+  .ticket-divider::before { left:-14px; }
+  .ticket-divider::after  { right:-14px; }
+  .ticket-dash {
+    position:absolute; top:50%; left:20px; right:20px;
+    border-top:2px dashed #2d2d5e;
+  }
+
+  .qr-zone { padding: 8px 26px 30px; text-align:center; }
+  .qr-box {
+    background:#fff; padding:14px; border-radius:14px;
+    display:inline-block; line-height:0;
+  }
+  .qr-box img { width: 210px; height: 210px; display:block; }
+
+  .booking-code-big {
+    font-family: 'Oswald', monospace;
+    font-size: 1.5rem; font-weight:700; color:#fff;
+    letter-spacing: 2px; margin-top:16px;
+  }
+  .qr-hint { color:#8b8bb5; font-size:.8rem; margin-top:8px; line-height:1.5; }
+
+  .paid-badge {
+    display:inline-flex; align-items:center; gap:6px;
+    background:#16532d; color:#22c55e;
+    padding:6px 14px; border-radius:20px;
+    font-size:.82rem; font-weight:700; margin-top:14px;
+  }
+
+  .ticket-actions { display:flex; gap:10px; margin-top:20px; }
+  .ticket-actions .btn { flex:1; }
+
+  @media print {
+    .aki-navbar, .aki-footer, .ticket-actions, .qr-hint { display:none !important; }
+    body { background:#fff !important; }
+    .ticket { border:2px solid #000; box-shadow:none; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="ticket-wrap">
+
+    <div class="ticket">
+      <!-- Header -->
+      <div class="ticket-head">
+        <h2>{% if lang == 'ky' %}ЭЛЕКТРОНДУК БИЛЕТ{% else %}ЭЛЕКТРОННЫЙ БИЛЕТ{% endif %}</h2>
+        <div class="sub">Байэл Cinema · Кызыл-Кыя</div>
+      </div>
+
+      <!-- Details -->
+      <div class="ticket-body">
+        <div class="t-row">
+          <span class="t-label">{% if lang == 'ky' %}Тасма{% else %}Фильм{% endif %}</span>
+          <span class="t-value">
+            {% if lang == 'ky' %}{{ booking.screening.movie.title_ky }}{% else %}{{ booking.screening.movie.title_ru }}{% endif %}
+          </span>
+        </div>
+
+        <div class="t-row">
+          <span class="t-label">{% if lang == 'ky' %}Күнү жана убактысы{% else %}Дата и время{% endif %}</span>
+          <span class="t-value">{{ booking.screening.start_time|date:"d.m.Y · H:i" }}</span>
+        </div>
+
+        <div class="t-row">
+          <span class="t-label">{% if lang == 'ky' %}Зал{% else %}Зал{% endif %}</span>
+          <span class="t-value">{{ booking.screening.hall.name }}</span>
+        </div>
+
+        <div class="t-row">
+          <span class="t-label">
+            {% if lang == 'ky' %}Орундар{% else %}Места{% endif %}
+            ({{ booking.seats_count }})
+          </span>
+          <span class="t-value">
+            <span class="seats-wrap">
+              {% for bs in booking.booked_seats.all %}
+              <span class="seat-chip">{{ bs.seat.row }}-{{ bs.seat.number }}</span>
+              {% endfor %}
+            </span>
+          </span>
+        </div>
+
+        <div class="t-row">
+          <span class="t-label">{% if lang == 'ky' %}Сумма{% else %}Сумма{% endif %}</span>
+          <span class="t-value" style="color:#22c55e;">{{ booking.total_amount|floatformat:0 }} сом</span>
+        </div>
+      </div>
+
+      <!-- Perforation -->
+      <div class="ticket-divider"><div class="ticket-dash"></div></div>
+
+      <!-- QR -->
+      <div class="qr-zone">
+        <div class="qr-box">
+          <img src="https://quickchart.io/qr?text={{ qr_payload|urlencode }}&size=210&margin=1"
+               alt="QR {{ booking.booking_code }}" />
+        </div>
+
+        <div class="booking-code-big">{{ booking.booking_code }}</div>
+
+        <div class="paid-badge">
+          <i class="fas fa-check-circle"></i>
+          {% if lang == 'ky' %}Төлөнгөн{% else %}Оплачено{% endif %}
+        </div>
+
+        <div class="qr-hint">
+          {% if lang == 'ky' %}
+            Бул QR-кодду кассада көрсөтүңүз.<br>Ар бир билет бир жолу гана колдонулат.
+          {% else %}
+            Покажите этот QR-код на кассе.<br>Каждый билет действителен для одного входа.
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="ticket-actions">
+      <a href="{% url 'my_bookings' %}" class="btn btn-outline-secondary">
+        <i class="fas fa-arrow-left me-1"></i>
+        {% if lang == 'ky' %}Артка{% else %}Назад{% endif %}
+      </a>
+      <button onclick="window.print()" class="btn btn-danger">
+        <i class="fas fa-print me-1"></i>
+        {% if lang == 'ky' %}Басып чыгаруу{% else %}Распечатать{% endif %}
+      </button>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

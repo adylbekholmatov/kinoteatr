@@ -11,7 +11,7 @@ from django.db.models.functions import TruncDate
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from .models import Booking, Hall, Movie, Screening
+from .models import Booking, Hall, Movie, Notification, Screening
 from .panel_forms import BookingStatusForm, HallForm, MovieForm, ScreeningForm
 
 
@@ -390,12 +390,101 @@ def panel_booking_status(request, pk):
 
     booking = get_object_or_404(Booking, pk=pk)
     if request.method == 'POST':
+        old_status = booking.status
         form = BookingStatusForm(request.POST, instance=booking)
         if form.is_valid():
-            form.save()
+            b = form.save(commit=False)
+            changed = b.status != old_status
+            # Ручная смена статуса — тоже решение по оплате, фиксируем автора
+            if changed:
+                b.processed_by = request.user
+                b.processed_at = timezone.now()
+            b.save()
+
+            # Из всех статусов клиенту важны только эти два
+            if changed and b.user:
+                msg = ''
+                if b.status == 'paid':
+                    msg = (f'Оплата подтверждена! «{b.screening.movie.title_ru}» '
+                           f'{b.screening.start_time.strftime("%d.%m в %H:%M")}. '
+                           f'Ждём в кино! 🎬')
+                elif b.status == 'cancelled':
+                    msg = 'Бронирование отменено администратором.'
+                if msg:
+                    Notification.objects.create(user=b.user, booking=b, message=msg)
+
             messages.success(request, f'Статус бронирования {booking.booking_code} обновлён.')
         else:
             messages.error(request, 'Ошибка при обновлении статуса.')
+    return redirect('panel_booking_detail', pk=pk)
+
+
+def _process_payment(booking, user, status, message, note='', clear_receipt=False):
+    """Общий путь для решений по оплате: статус, автор, время, уведомление."""
+    booking.status = status
+    booking.payment_note = note
+    booking.processed_by = user
+    booking.processed_at = timezone.now()
+
+    fields = ['status', 'payment_note', 'processed_by', 'processed_at']
+    if clear_receipt:
+        booking.payment_receipt = None
+        fields.append('payment_receipt')
+    booking.save(update_fields=fields)
+
+    # Кассовые брони уведомлять некуда — у них нет аккаунта на сайте
+    if booking.user:
+        Notification.objects.create(user=booking.user, booking=booking, message=message)
+
+
+@login_required
+def panel_booking_confirm(request, pk):
+    guard = _staff_required(request)
+    if guard:
+        return guard
+    booking = get_object_or_404(Booking, pk=pk)
+    if request.method == 'POST' and booking.status == 'receipt_uploaded':
+        _process_payment(
+            booking, request.user, 'paid',
+            f'Оплата подтверждена! «{booking.screening.movie.title_ru}» '
+            f'{booking.screening.start_time.strftime("%d.%m в %H:%M")}. '
+            f'Ждём в кино! 🎬',
+        )
+        messages.success(request, 'Оплата подтверждена, клиент получил уведомление на сайте.')
+    return redirect('panel_booking_detail', pk=pk)
+
+
+@login_required
+def panel_booking_reject(request, pk):
+    guard = _staff_required(request)
+    if guard:
+        return guard
+    booking = get_object_or_404(Booking, pk=pk)
+    if request.method == 'POST':
+        note = request.POST.get('note', '').strip()
+        msg = 'Оплата не подтверждена, бронирование отменено.'
+        if note:
+            msg += f' Причина: {note}'
+        _process_payment(booking, request.user, 'cancelled', msg, note=note)
+        messages.success(request, 'Бронирование отклонено, клиент получил уведомление на сайте.')
+    return redirect('panel_booking_detail', pk=pk)
+
+
+@login_required
+def panel_booking_request_topup(request, pk):
+    guard = _staff_required(request)
+    if guard:
+        return guard
+    booking = get_object_or_404(Booking, pk=pk)
+    if request.method == 'POST':
+        note = request.POST.get('note', '').strip()
+        msg = f'Требуется доплата по брони {booking.booking_code}.'
+        if note:
+            msg += f' {note}'
+        msg += ' Загрузите новый чек на странице оплаты.'
+        _process_payment(booking, request.user, 'pending', msg,
+                         note=note, clear_receipt=True)
+        messages.success(request, 'Запрос доплаты отправлен, клиент получил уведомление на сайте.')
     return redirect('panel_booking_detail', pk=pk)
 
 

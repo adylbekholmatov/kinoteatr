@@ -123,7 +123,7 @@ namespace AKICinemaAdmin.Views {
                 return;
             }
             _contentLoaded = true;
-            System.Uri resourceLocater = new System.Uri("/AKICinemaAdmin;component/views/bookingsuccesspage.xaml", System.UriKind.Relative);
+            System.Uri resourceLocater = new System.Uri("/AKICinemaAdmin;V1.0.0.0;component/views/bookingsuccesspage.xaml", System.UriKind.Relative);
             
             #line 1 "..\..\..\..\Views\BookingSuccessPage.xaml"
             System.Windows.Application.LoadComponent(this, resourceLocater);

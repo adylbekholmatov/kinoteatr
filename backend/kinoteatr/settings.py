@@ -103,6 +103,26 @@ FREEDOM_PAY_SECRET_KEY   = os.getenv('FREEDOM_PAY_SECRET_KEY', '')
 # На продакшне — ваш домен: https://akicinema.kg
 FREEDOM_PAY_SITE_URL     = os.getenv('FREEDOM_PAY_SITE_URL', 'http://127.0.0.1:8000')
 FREEDOM_PAY_TESTING_MODE = os.getenv('FREEDOM_PAY_TESTING_MODE', 'True') == 'True'
+
+# ── Реквизиты для оплаты переводом ───────────────────────────────────────────
+# Измени эти значения на реальные реквизиты
+TRANSFER_PHONE = os.getenv('TRANSFER_PHONE', '+996 773 030 314')
+TRANSFER_NAME  = os.getenv('TRANSFER_NAME',  'Кеңешбек уулу Марс')
+TRANSFER_BANK  = os.getenv('TRANSFER_BANK',  'Бакай Банк')
+TRANSFER_CARD  = os.getenv('TRANSFER_CARD',  '4177 4901 9861 2386')
+
+# ── Email / SMTP ──────────────────────────────────────────────────────────────
+EMAIL_BACKEND = (
+    'django.core.mail.backends.console.EmailBackend' if DEBUG
+    else 'django.core.mail.backends.smtp.EmailBackend'
+)
+EMAIL_HOST          = os.getenv('EMAIL_HOST', 'smtp.gmail.com')
+EMAIL_PORT          = int(os.getenv('EMAIL_PORT', '587'))
+EMAIL_USE_TLS       = os.getenv('EMAIL_USE_TLS', 'True') == 'True'
+EMAIL_HOST_USER     = os.getenv('EMAIL_HOST_USER', '')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', '')
+DEFAULT_FROM_EMAIL  = os.getenv('DEFAULT_FROM_EMAIL', 'Байэл Cinema <info@bayelcinema.kg>')
+ADMIN_EMAIL         = os.getenv('ADMIN_EMAIL', 'info@bayelcinema.kg')
 # ─────────────────────────────────────────────────────────────────────────────
 
 LOGIN_URL = '/auth/login/'

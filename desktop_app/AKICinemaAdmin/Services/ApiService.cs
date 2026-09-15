@@ -12,7 +12,7 @@ namespace AKICinemaAdmin.Services;
 public class ApiService
 {
     private readonly HttpClient _client;
-    private string _baseUrl = "http://127.0.0.1:8000/api";
+    private string _baseUrl = "https://bayel-cinema.online/api";
     private string? _token;
 
     public bool IsAuthenticated => !string.IsNullOrEmpty(_token);
@@ -21,8 +21,12 @@ public class ApiService
 
     public string BaseUrl
     {
-        get => _baseUrl.Replace("/api", "");
-        set => _baseUrl = value.TrimEnd('/') + "/api";
+        get => _baseUrl;
+        set
+        {
+            var trimmed = value.TrimEnd('/');
+            _baseUrl = trimmed.EndsWith("/api") ? trimmed : trimmed + "/api";
+        }
     }
 
     public ApiService()
@@ -156,5 +160,97 @@ public class ApiService
         }
         catch { }
         return null;
+    }
+
+    // ── PENDING RECEIPTS ─────────────────────────────────
+    public async Task<List<PendingReceipt>> GetPendingReceiptsAsync()
+    {
+        try
+        {
+            var response = await _client.GetAsync($"{_baseUrl}/pending-receipts/");
+            var json = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                var wrapper = JsonConvert.DeserializeAnonymousType(json, new { bookings = new List<PendingReceipt>() });
+                return wrapper?.bookings ?? new List<PendingReceipt>();
+            }
+        }
+        catch { }
+        return new();
+    }
+
+    public async Task<(bool success, string error)> ConfirmBookingAsync(int pk)
+    {
+        try
+        {
+            var content = new StringContent("{}", Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync($"{_baseUrl}/bookings-admin/{pk}/confirm/", content);
+            if (response.IsSuccessStatusCode) return (true, "");
+            var json = await response.Content.ReadAsStringAsync();
+            dynamic? err = JsonConvert.DeserializeObject(json);
+            return (false, err?.error?.ToString() ?? "Ошибка");
+        }
+        catch (Exception ex) { return (false, ex.Message); }
+    }
+
+    public async Task<(bool success, string error)> RejectBookingAsync(int pk, string note = "")
+    {
+        try
+        {
+            var body = JsonConvert.SerializeObject(new { note });
+            var content = new StringContent(body, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync($"{_baseUrl}/bookings-admin/{pk}/reject/", content);
+            if (response.IsSuccessStatusCode) return (true, "");
+            var json = await response.Content.ReadAsStringAsync();
+            dynamic? err = JsonConvert.DeserializeObject(json);
+            return (false, err?.error?.ToString() ?? "Ошибка");
+        }
+        catch (Exception ex) { return (false, ex.Message); }
+    }
+
+    // ── TICKET VERIFICATION ──────────────────────────────
+    public async Task<TicketVerifyResult?> VerifyTicketAsync(string qrData)
+    {
+        try
+        {
+            var body = JsonConvert.SerializeObject(new { qr_data = qrData });
+            var content = new StringContent(body, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync($"{_baseUrl}/verify-ticket/", content);
+            var json = await response.Content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<TicketVerifyResult>(json);
+        }
+        catch (Exception ex)
+        {
+            return new TicketVerifyResult { Valid = false, Reason = $"Ошибка связи: {ex.Message}" };
+        }
+    }
+
+    public async Task<(bool success, string error)> RequestTopupAsync(int pk, string note = "")
+    {
+        try
+        {
+            var body = JsonConvert.SerializeObject(new { note });
+            var content = new StringContent(body, Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync($"{_baseUrl}/bookings-admin/{pk}/request-topup/", content);
+            if (response.IsSuccessStatusCode) return (true, "");
+            var json = await response.Content.ReadAsStringAsync();
+            dynamic? err = JsonConvert.DeserializeObject(json);
+            return (false, err?.error?.ToString() ?? "Ошибка");
+        }
+        catch (Exception ex) { return (false, ex.Message); }
+    }
+
+    public async Task<(bool success, string error)> RestoreBookingAsync(int pk)
+    {
+        try
+        {
+            var content = new StringContent("{}", Encoding.UTF8, "application/json");
+            var response = await _client.PostAsync($"{_baseUrl}/bookings-admin/{pk}/restore/", content);
+            if (response.IsSuccessStatusCode) return (true, "");
+            var json = await response.Content.ReadAsStringAsync();
+            dynamic? err = JsonConvert.DeserializeObject(json);
+            return (false, err?.error?.ToString() ?? "Ошибка");
+        }
+        catch (Exception ex) { return (false, ex.Message); }
     }
 }

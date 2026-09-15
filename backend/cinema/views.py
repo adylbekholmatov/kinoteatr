@@ -230,14 +230,10 @@ def checkout(request, screening_id):
     })
 
 
-# ── ОПЛАТА через Paybox ───────────────────────────────────────────────────────
+# ── ОПЛАТА переводом ─────────────────────────────────────────────────────────
 
 @login_required
 def payment(request):
-    """
-    Creates a pending Booking, initiates Paybox payment and redirects the user
-    to the Paybox hosted payment page.
-    """
     lang = get_lang(request)
     checkout_data = request.session.get('checkout_data')
     if not checkout_data:
@@ -247,148 +243,81 @@ def payment(request):
     seat_ids  = checkout_data['seat_ids']
     total     = Decimal(checkout_data['total'])
 
-    # Re-check seat availability before creating booking
     booked_ids = screening.get_booked_seat_ids()
     conflict   = [sid for sid in seat_ids if sid in booked_ids]
     if conflict:
         messages.error(request, 'Орундар алынган. Башка орун тандаңыз.' if lang == 'ky' else 'Места уже заняты. Выберите другие.')
         return redirect('seat_selection', screening_id=screening.id)
 
-    # Create a PENDING booking (seats are held; becomes 'paid' after callback)
     with transaction.atomic():
         booking = Booking.objects.create(
             screening=screening,
             user=request.user,
             email=checkout_data['email'],
             phone=checkout_data['phone'],
-            address='',
             total_amount=total,
             status='pending',
         )
         for sid in seat_ids:
             BookedSeat.objects.create(booking=booking, seat_id=sid)
 
-    # Remove checkout data from session immediately so page refresh won't duplicate
     del request.session['checkout_data']
-
-    # Initiate Freedom Pay payment
-    from cinema.freedom_pay import create_payment
-    site_url = getattr(settings, 'FREEDOM_PAY_SITE_URL', '').rstrip('/')
-
-    try:
-        payment_id, redirect_url = create_payment(
-            order_id    = booking.booking_code,
-            amount      = total,
-            description = f'Байэл Cinema —{screening.movie.title_ru} ({screening.start_time.strftime("%d.%m.%Y %H:%M")})',
-            success_url = f'{site_url}/payment/success/',
-            fail_url    = f'{site_url}/payment/fail/',
-            result_url  = f'{site_url}/payment/callback/',
-            user_phone  = checkout_data.get('phone', ''),
-            user_email  = checkout_data.get('email', ''),
-        )
-        booking.paybox_payment_id = payment_id
-        booking.save(update_fields=['paybox_payment_id'])
-        return redirect(redirect_url)
-
-    except Exception as exc:
-        logger.error('Freedom Pay create_payment error: %s', exc)
-        # Cancel the booking if Freedom Pay is unavailable
-        booking.status = 'cancelled'
-        booking.save(update_fields=['status'])
-        messages.error(
-            request,
-            'Ката кетти. Кийинчерээк кайра аракет кылыңыз.' if lang == 'ky'
-            else f'Ошибка платёжной системы: {exc}. Попробуйте позже.'
-        )
-        return redirect('seat_selection', screening_id=screening.id)
+    return redirect('payment_pending', code=booking.booking_code)
 
 
-# ── PAYBOX CALLBACK (server → server) ────────────────────────────────────────
+@login_required
+def payment_pending(request, code):
+    lang    = get_lang(request)
+    booking = get_object_or_404(Booking, booking_code=code, user=request.user)
 
-@csrf_exempt
-@require_POST
-def paybox_callback(request):
-    """
-    Paybox calls this URL server-to-server after payment attempt.
-    Must respond with XML: pg_status = ok | rejected | error.
-    """
-    from cinema.freedom_pay import verify_callback, callback_xml
+    transfer_phone = getattr(settings, 'TRANSFER_PHONE', '')
+    transfer_name  = getattr(settings, 'TRANSFER_NAME', '')
+    transfer_bank  = getattr(settings, 'TRANSFER_BANK', '')
+    transfer_card  = getattr(settings, 'TRANSFER_CARD', '')
 
-    # Flatten QueryDict lists → plain dict
-    data = {k: v[0] if isinstance(v, list) else v for k, v in request.POST.items()}
-
-    if not verify_callback(data):
-        logger.warning('Paybox callback: invalid signature. data=%s', data)
-        return HttpResponse(callback_xml('error', 'Invalid signature'), content_type='text/xml')
-
-    order_id   = data.get('pg_order_id', '')
-    pg_result  = data.get('pg_result', '0')
-    payment_id = data.get('pg_payment_id', '')
-
-    try:
-        booking = Booking.objects.get(booking_code=order_id)
-    except Booking.DoesNotExist:
-        logger.error('Paybox callback: booking not found order_id=%s', order_id)
-        return HttpResponse(callback_xml('error', 'Order not found'), content_type='text/xml')
-
-    if pg_result == '1':
-        booking.status            = 'paid'
-        booking.paybox_payment_id = payment_id
-        booking.save(update_fields=['status', 'paybox_payment_id'])
-        logger.info('Paybox: booking %s marked as PAID', order_id)
-        return HttpResponse(callback_xml('ok', 'Payment accepted'), content_type='text/xml')
-    else:
-        booking.status = 'cancelled'
-        booking.save(update_fields=['status'])
-        logger.info('Paybox: booking %s marked as CANCELLED (pg_result=%s)', order_id, pg_result)
-        return HttpResponse(callback_xml('ok', 'Payment rejected'), content_type='text/xml')
-
-
-# ── PAYBOX SUCCESS redirect ───────────────────────────────────────────────────
-
-def paybox_success(request):
-    """
-    Paybox redirects the user here after a successful payment.
-    The callback may arrive slightly after the redirect, so we handle both states.
-    """
-    lang     = get_lang(request)
-    order_id = request.GET.get('pg_order_id') or request.POST.get('pg_order_id', '')
-
-    if order_id:
-        try:
-            booking = Booking.objects.get(booking_code=order_id)
-            if booking.status == 'paid':
-                return redirect('booking_success', code=booking.booking_code)
-            # Callback not yet received — show a "processing" page
-            return render(request, 'cinema/payment_processing.html', {
-                'booking': booking,
-                'lang': lang,
-            })
-        except Booking.DoesNotExist:
-            pass
-
-    return redirect('index')
-
-
-# ── PAYBOX FAIL redirect ──────────────────────────────────────────────────────
-
-def paybox_fail(request):
-    """Paybox redirects the user here after a failed or cancelled payment."""
-    lang     = get_lang(request)
-    order_id = request.GET.get('pg_order_id') or request.POST.get('pg_order_id', '')
-    booking  = None
-    if order_id:
-        try:
-            booking = Booking.objects.select_related('screening__movie', 'screening__hall').get(
-                booking_code=order_id
-            )
-        except Booking.DoesNotExist:
-            pass
-
-    return render(request, 'cinema/payment_fail.html', {
+    return render(request, 'cinema/payment_pending.html', {
         'booking': booking,
+        'transfer_phone': transfer_phone,
+        'transfer_name': transfer_name,
+        'transfer_bank': transfer_bank,
+        'transfer_card': transfer_card,
         'lang': lang,
     })
+
+
+@login_required
+@require_POST
+def upload_receipt(request, code):
+    lang    = get_lang(request)
+    booking = get_object_or_404(Booking, booking_code=code, user=request.user)
+
+    if booking.status not in ('pending', 'receipt_uploaded'):
+        messages.error(request, 'Нельзя загрузить чек для этого бронирования.')
+        return redirect('payment_pending', code=code)
+
+    receipt = request.FILES.get('receipt')
+    if not receipt:
+        messages.error(request, 'Выберите файл чека.' if lang != 'ky' else 'Чек файлын тандаңыз.')
+        return redirect('payment_pending', code=code)
+
+    # Allow only images
+    if not receipt.content_type.startswith('image/'):
+        messages.error(request, 'Загрузите изображение (фото чека).')
+        return redirect('payment_pending', code=code)
+
+    booking.payment_receipt = receipt
+    booking.status = 'receipt_uploaded'
+    booking.save(update_fields=['payment_receipt', 'status'])
+
+    # Администратора уведомлять не нужно: WPF опрашивает /api/pending-receipts/
+    # и показывает бейдж на «Чеки оплаты».
+
+    messages.success(
+        request,
+        'Чек загружен! Мы проверим оплату и подтвердим бронирование.' if lang != 'ky'
+        else 'Чек жүктөлдү! Биз төлөмдү текшерип, бронду тастыктайбыз.'
+    )
+    return redirect('booking_success', code=code)
 
 
 # ── УСПЕШНОЕ БРОНИРОВАНИЕ ─────────────────────────────────────────────────────
@@ -476,7 +405,7 @@ def cancel_booking(request, code):
         )
         return redirect('my_bookings')
 
-    if booking.status not in ('paid', 'reserved', 'pending'):
+    if booking.status not in ('paid', 'reserved', 'pending', 'receipt_uploaded'):
         messages.error(
             request,
             'Бул буйрутманы жокко чыгаруу мүмкүн эмес.' if lang == 'ky'
@@ -484,15 +413,54 @@ def cancel_booking(request, code):
         )
         return redirect('my_bookings')
 
+    had_receipt = booking.status == 'receipt_uploaded'
     booking.status = 'cancelled'
-    booking.save(update_fields=['status'])
+    booking.payment_note = 'Отменено клиентом'
+    booking.save(update_fields=['status', 'payment_note'])
+
+    # Если клиент уже загружал чек — пометить для WPF-администратора
+    if had_receipt:
+        from .models import Notification
+        from django.contrib.auth.models import User
+        for admin in User.objects.filter(is_staff=True):
+            Notification.objects.create(
+                user=admin,
+                booking=booking,
+                message=(
+                    f'❌ Клиент отменил бронь «{booking.screening.movie.title_ru}» '
+                    f'{booking.screening.start_time.strftime("%d.%m в %H:%M")} '
+                    f'(код {booking.booking_code}). Чек был загружен.'
+                ),
+            )
 
     messages.success(
         request,
-        'Буйрутма жокко чыгарылды. Акча 3–5 жумуш күндүн ичинде кайтарылат.' if lang == 'ky'
-        else 'Бронирование отменено. Деньги вернутся в течение 3–5 рабочих дней.'
+        'Буйрутма жокко чыгарылды. Акча кайтарылбайт.' if lang == 'ky'
+        else 'Бронирование отменено. Оплаченные средства не возвращаются.'
     )
     return redirect('my_bookings')
+
+
+@login_required
+def ticket_view(request, code):
+    """Электронный билет с QR — показывается клиенту после подтверждения оплаты."""
+    from .ticket_utils import build_qr_payload
+
+    booking = get_object_or_404(Booking, booking_code=code, user=request.user)
+
+    if booking.status != 'paid':
+        messages.error(
+            request,
+            'Билет али даяр эмес.' if get_lang(request) == 'ky'
+            else 'Билет ещё не готов — оплата не подтверждена.'
+        )
+        return redirect('my_bookings')
+
+    return render(request, 'cinema/ticket.html', {
+        'lang': get_lang(request),
+        'booking': booking,
+        'qr_payload': build_qr_payload(booking.booking_code),
+    })
 
 
 def refund_policy(request):

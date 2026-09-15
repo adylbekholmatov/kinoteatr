@@ -1,0 +1,77 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "smile-dental",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "C:\\Users\\user\\Desktop\\smile_dental\\manage.py",
+        "runserver",
+        "8000"
+      ],
+      "port": 8000
+    },
+    {
+      "name": "avtovokzal",
+      "runtimeExecutable": "C:\\Users\\user\\Desktop\\avtovokzal\\venv\\Scripts\\python.exe",
+      "runtimeArgs": [
+        "C:\\Users\\user\\Desktop\\avtovokzal\\manage.py",
+        "runserver",
+        "8001"
+      ],
+      "port": 8001
+    },
+    {
+      "name": "electrokg",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "C:\\Users\\user\\Desktop\\Магазин\\manage.py",
+        "runserver",
+        "8002"
+      ],
+      "port": 8002
+    },
+    {
+      "name": "nextgenhub",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "C:\\Users\\user\\Desktop\\NextGenHub\\manage.py",
+        "runserver",
+        "8765"
+      ],
+      "port": 8765
+    },
+    {
+      "name": "dostavka",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "C:\\Users\\user\\Desktop\\Доставка.kg\\manage.py",
+        "runserver",
+        "8003"
+      ],
+      "port": 8003
+    },
+    {
+      "name": "kinoteatr",
+      "runtimeExecutable": "C:\\Users\\user\\Desktop\\kinoteatr\\.venv\\Scripts\\python.exe",
+      "runtimeArgs": [
+        "C:\\Users\\user\\Desktop\\kinoteatr\\backend\\manage.py",
+        "runserver",
+        "8004"
+      ],
+      "port": 8004
+    },
+    {
+      "name": "altyn-aska",
+      "runtimeExecutable": "python",
+      "runtimeArgs": [
+        "-m",
+        "http.server",
+        "8010",
+        "--directory",
+        "C:/Users/user/Desktop/altyn-aska"
+      ],
+      "port": 8010
+    }
+  ]
+}

@@ -75,6 +75,26 @@ public class SeatStateToEnabledConverter : IValueConverter
         => Binding.DoNothing;
 }
 
+public class BoolToColorConverter : IValueConverter
+{
+    public object Convert(object value, Type t, object p, CultureInfo c)
+        => value is true
+            ? new SolidColorBrush(Color.FromRgb(239, 68, 68))   // red — cancelled
+            : new SolidColorBrush(Color.FromRgb(251, 191, 36));  // amber — pending
+    public object ConvertBack(object value, Type t, object p, CultureInfo c)
+        => Binding.DoNothing;
+}
+
+public class BoolToBadgeBgConverter : IValueConverter
+{
+    public object Convert(object value, Type t, object p, CultureInfo c)
+        => value is true
+            ? new SolidColorBrush(Color.FromArgb(0x33, 0xEF, 0x44, 0x44))  // red tint — cancelled
+            : new SolidColorBrush(Color.FromArgb(0x33, 0xFB, 0xBF, 0x24)); // amber tint — pending
+    public object ConvertBack(object value, Type t, object p, CultureInfo c)
+        => Binding.DoNothing;
+}
+
 public class VipToColorConverter : IValueConverter
 {
     public object Convert(object value, Type t, object p, CultureInfo c)

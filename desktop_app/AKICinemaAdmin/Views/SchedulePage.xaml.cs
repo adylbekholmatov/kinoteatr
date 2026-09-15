@@ -156,12 +156,22 @@ public partial class SchedulePage : Page
             Cursor = Cursors.Hand,
         };
 
-        card.MouseEnter += (s2, e) =>
-            card.BorderBrush = new SolidColorBrush(accentColor);
-        card.MouseLeave += (s2, e) =>
-            card.BorderBrush = new SolidColorBrush(Color.FromRgb(46, 46, 46));
-        card.MouseLeftButtonUp += (s2, e) =>
-            ScreeningSelected?.Invoke(s);
+        bool isPast = DateTime.TryParse(s.StartTime, out var st) && st <= DateTime.Now;
+
+        if (!isPast)
+        {
+            card.MouseEnter += (s2, e) =>
+                card.BorderBrush = new SolidColorBrush(accentColor);
+            card.MouseLeave += (s2, e) =>
+                card.BorderBrush = new SolidColorBrush(Color.FromRgb(46, 46, 46));
+            card.MouseLeftButtonUp += (s2, e) =>
+                ScreeningSelected?.Invoke(s);
+        }
+        else
+        {
+            card.Cursor = Cursors.Arrow;
+            card.Opacity = 0.55;
+        }
 
         var grid = new Grid();
         grid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -273,15 +283,16 @@ public partial class SchedulePage : Page
 
         var buyBtn = new Button
         {
-            Content = "Продать билет →",
+            Content = isPast ? "Сеанс прошёл" : "Продать билет →",
             Style = (Style)Application.Current.Resources["RedButtonStyle"],
             Padding = new Thickness(16, 8, 16, 8),
             FontSize = 12,
-            IsEnabled = s.AvailableSeats > 0
+            IsEnabled = !isPast && s.AvailableSeats > 0
         };
-        buyBtn.Click += (s2, e) => ScreeningSelected?.Invoke(s);
+        if (!isPast)
+            buyBtn.Click += (s2, e) => ScreeningSelected?.Invoke(s);
 
-        if (isVip)
+        if (isVip && !isPast)
         {
             buyBtn.Background = new SolidColorBrush(Color.FromRgb(180, 140, 30));
         }
