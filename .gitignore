@@ -1,6 +1,6 @@
-.venv
-.vscode
-__pycache__
+.venv/
+.vscode/
+__pycache__/
 *.pyc
 *.pyo
 *.pyd
@@ -8,3 +8,14 @@ __pycache__
 *.sqlite3
 *.log
 
+# Visual Studio / .NET
+.vs/
+bin/
+obj/
+publish/
+
+# Build files
+*.exe
+*.dll
+*.rar
+*.zip
