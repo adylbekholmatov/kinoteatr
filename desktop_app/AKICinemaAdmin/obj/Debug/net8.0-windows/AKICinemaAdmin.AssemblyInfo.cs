@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AKI Cinema")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+8ea70adb845c089972ac9c893454ac87276dbe1d")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+6e17852c57082d6ddc6bb35e6266ecdd60013dac")]
 [assembly: System.Reflection.AssemblyProductAttribute("AKI Cinema Admin")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AKICinemaAdmin")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
